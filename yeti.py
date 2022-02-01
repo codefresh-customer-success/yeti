@@ -123,13 +123,49 @@ def createSensor(projectName, shortName, uuidStr, yamlData):
         'triggers': [
           {
             'template': {
-                'name': shortName,
-                'conditions': provider + '-' + uuidStr
-            }         # template
-          }         # trigger element
-        ]           # triggers array
-      }             # spec
-    }               # full Sensor
+              'name': shortName,
+              'conditions': provider + '-' + uuidStr,
+              'argoWorkflow': {
+                'operation': 'submit',
+                'source': {
+                  'resource': {
+                    'apiVersion': 'argoproj.io/v1alpha1',
+                    'kind': 'WorkflowTemplate',
+                    'metadata': {
+                      'name': shortName + '-pipeline',
+                      'spec': {
+                        'arguments': {
+                          'parameters': [
+                                # TODO
+                          ]     # parameter array
+                        },      # arguments
+                        'workflowTemplateRef' : {
+                          'name': shortName+ '-template'
+                          'template': 'pipeline'
+                        },
+                        'volumeClaimTemplates': [
+                          {
+                            'metadata': { 'name': 'codefresh-volume'},
+                            'spec': {
+                              'accessModes': ['ReadWriteOnce'],
+                              'resources': {
+                                'requests':{
+                                  'storage': '20Gi'
+                                }   #requests
+                              }     # resources
+                            }       # spec
+                          }         # VolumeClaimTemplate element
+                        ]           # VolumeClaimTemplate array
+                      }
+                    }
+                  }                 # resource
+                }                   # source
+              }                     # argoWrokflow
+            }                       # template
+          }                         # trigger element
+        ]                           # triggers array
+      }                             # spec
+    }                               # full Sensor
 
     # Write file
     sensorFile =  open(f"{projectName}/{shortName}.sensor.yaml", "w")
@@ -138,7 +174,44 @@ def createSensor(projectName, shortName, uuidStr, yamlData):
         print("Generate Sensor:")
         print(yaml.dump(sensorYaml))
 
+def createWorkflowTemplate(projectName, shortName, yamlData):
+    wkfYaml={
+      'apiVersion': "argoproj.io/v1alpha1",
+      'kind':'WorkflowTemplate',
+      'metadata': {
+        'name': shortName + "-template"
+      },
+      'spec': {
+        'entrypoint': 'pipeline',
 
+        'templates': [
+          {
+            'name': 'pipeline',
+            'inputs': {
+                "parameters" : [
+                    # TODO:
+                        # pipeline variables
+                        # shared config
+                ]           # parameter array
+            },              # inputs of pipeline
+            'dag': {
+              'tasks': []   # TO be filled later in process
+            }               # dag
+          }
+        ]                   # templates array
+      }                     # spec
+    }                       # WorkflowTemplate
+
+    # Write file
+    wkfFile=open(f"{projectName}/{shortName}.workflow-template.yaml", "w")
+    yaml.dump(wkfYaml, wkfFile)
+    if DEBUG:
+        print("Generate WorkflowTemplate:")
+        print(yaml.dump(wkfYaml))
+
+#
+#   Main
+#
 def main():
 
     args=parse_arguments()
@@ -148,6 +221,8 @@ def main():
 
     # Generate Content
     os.makedirs(projectName, exist_ok=True)
+    createWorkflowTemplate(projectName, pipelineShortName, yamlData)
+
     if len(yamlData['spec']['triggers']) == 0:
         print("No trigger defined")
         print(" Skipping EventSource Creation")
