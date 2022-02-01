@@ -3,6 +3,8 @@ import argparse
 import pathlib
 import os
 import subprocess
+import yaml
+import uuid
 
 DEBUG=False
 
@@ -22,19 +24,141 @@ def parse_arguments():
     return args
 
 def extractYaml(cli, pipelineName):
+    global yamlData
+
     if DEBUG:
       print(f"Running: {cli} get pip {pipelineName} -o yaml > pipeline.yaml")
+
     ret=subprocess.run(f"{cli} get pip  {pipelineName} -o yaml > pipeline.yaml",
           capture_output=True, shell=True) # stderr=subprocess.STDOUT, check=True
-    if et.returncode != 0:
+    if ret.returncode != 0:
         print("Cannot extract the pipeline requested")
         print(f"  exit code: {ret.returncode}")
         print(f"  sdtout: {ret.stdout}")
         print(f"  error: {ret.stderr}")
-        
+        return null
+
+
+    with open("pipeline.yaml", "r") as stream:
+        try:
+            yamlData=yaml.safe_load(stream)
+        except yaml.YAMLError as exc:
+            print(exc)
+    return yamlData
+
+def createEvenSource(projectName, shortName, uuidStr, yamlData):
+    provider=yamlData['spec']['triggers'][0]['provider']
+    fullRepoName=yamlData['spec']['triggers'][0]['repo']
+    (owner,repoName)=fullRepoName.split('/')
+    ESYaml={
+        'apiVersion': "argoproj.io/v1alpha1",
+        'kind':'EventSource',
+        'metadata': {
+            'name': shortName
+        },
+        'spec': {
+          'eventBusName': 'codefresh-eventbus',
+          'service': {
+            'ports': [ {'port': 80}]
+          },
+          'template': {
+             'serviceAccountName': 'argo-server'
+          },
+          provider: {
+            provider + '-' + uuidStr : {
+              'events': ['push'],
+              'repositories': [
+                {
+                    'owner': owner,
+                    'names': [repoName]
+                }
+              ],
+              'webhook': {
+                'port': '80',
+                'method': 'POST',
+                'endpoint': '/webhooks/' + shortName + '/' + provider + '-' + uuidStr
+
+              },
+              'active': 'true',
+              'insecure': 'false',
+              'contentType': 'json',
+              'deleteHookOnFinish': 'true',
+              'apiToken': {
+                'name': 'autopilot-secret',
+                'key': 'git_token'
+              }
+            }
+          }
+        }
+    }
+
+    # Write file
+    ESFile =  open(f"{projectName}/{shortName}.event-source.yaml", "w")
+    yaml.dump(ESYaml, ESFile)
+    if DEBUG:
+        print("Generate EventSource:")
+        print(yaml.dump(ESYaml))
+
+def createSensor(projectName, shortName, uuidStr, yamlData):
+    provider=yamlData['spec']['triggers'][0]['provider']
+    sensorYaml={
+      'apiVersion': "argoproj.io/v1alpha1",
+      'kind':'Sensor',
+      'metadata': {
+        'name': shortName
+      },
+      'spec': {
+        'eventBusName': 'codefresh-eventbus',
+        'template': {
+          'serviceAccountName': 'argo-server'
+        },
+        'dependencies': [
+          {
+            'name': provider + '-' + uuidStr,
+            'eventName': provider + '-' + uuidStr,
+            'eventSourceName': projectName
+          }
+          # TODO: Add filters
+        ],
+        'triggers': [
+          {
+            'template': {
+                'name': shortName,
+                'conditions': provider + '-' + uuidStr
+            }         # template
+          }         # trigger element
+        ]           # triggers array
+      }             # spec
+    }               # full Sensor
+
+    # Write file
+    sensorFile =  open(f"{projectName}/{shortName}.sensor.yaml", "w")
+    yaml.dump(sensorYaml, sensorFile)
+    if DEBUG:
+        print("Generate Sensor:")
+        print(yaml.dump(sensorYaml))
+
+
 def main():
+
     args=parse_arguments()
-    os.makedirs(args.pipelineName, exist_ok=True)
-    extractYaml(cli=args.cli, pipelineName=args.pipelineName)
+    yamlData=extractYaml(cli=args.cli, pipelineName=args.pipelineName)
+    projectName=yamlData['metadata']['project'] if yamlData['metadata']['project'] else "default"
+    pipelineShortName=yamlData['metadata']['shortName']
+
+    # Generate Content
+    os.makedirs(projectName, exist_ok=True)
+    if len(yamlData['spec']['triggers']) == 0:
+        print("No trigger defined")
+        print(" Skipping EventSource Creation")
+        print(" Skipping Sensor Creation")
+    else:
+        uuidStr=str(uuid.uuid1())
+        createEvenSource(projectName, pipelineShortName, uuidStr, yamlData)
+        createSensor(projectName, pipelineShortName, uuidStr, yamlData)
+
+
+
+
 if __name__ == "__main__":
     main()
