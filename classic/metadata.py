@@ -22,11 +22,11 @@ class Metadata:
 
         self._name = None
         if 'name' in manifest_dict:
-            self.name = manifest_dict['name']
+            self._name = manifest_dict['name']
 
         self._project = None
         if 'project' in manifest_dict:
-            self.project = manifest_dict['project']
+            self._project = manifest_dict['project']
 
     @property
     def name(self):

@@ -3,6 +3,8 @@
 ### IMPORTS ###
 import argparse
 import logging
+import yaml
+
 from classic import Classic
 
 def parse_arguments():
@@ -24,8 +26,7 @@ def main():
     logging.basicConfig(format = log_format, level = args.log_level.upper())
 
     v1=Classic(args.filename)
-    logging.info("Yaml is: %s", v1)
-
+    Csdp.generate(v1)
 
 if __name__ == "__main__":
     main()
