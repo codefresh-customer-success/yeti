@@ -5,13 +5,23 @@ import os
 import subprocess
 import yaml
 import uuid
+import logging
+
+import classic as v1
+
+class v1:
+    """Class related to CXlassic Codefresh operations and data"""
+    def projectName         # project Name if it exists, default otherwise
+    def shortName           # pipleine short name (without the project)
+
+    def __init__(self, pipelineName, cli):
 
 DEBUG=False
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description='Convert Classic pipelines')
     parser.add_argument('pipelineName', help='Name of the pipeline to convert')
-    parser.add_argument('--debug', action='store_true', help='debug mode')
+    parser.add_argument('--log-level', default='info', help='set the log level, e.g. "debug", "info", "warn", "error"')
     parser.add_argument('--cli', type=pathlib.Path, default='/usr/local/bin/codefresh', help='path to the Codefresh classic CLI')
     args = parser.parse_args()
     global DEBUG
@@ -215,6 +225,7 @@ def createWorkflowTemplate(projectName, shortName, yamlData):
 def main():
 
     args=parse_arguments()
+    logging.setLevel(arg.log-)
     yamlData=extractYaml(cli=args.cli, pipelineName=args.pipelineName)
     projectName=yamlData['metadata']['project'] if yamlData['metadata']['project'] else "default"
     pipelineShortName=yamlData['metadata']['shortName']

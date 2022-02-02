@@ -3,13 +3,13 @@ Converter for Classic pipelines to CSDP Argo Workflows manifests
 
 ## Usage
 ```
-% python3 yeti.py -h
-usage: yeti.py [-h] [--debug] [--cli CLI] pipelineName
+% python3 c2csdp.py -h
+usage: c2csdp.py [-h] [--debug] [--cli CLI] pipelineName
 
 Convert Classic pipelines
 
 positional arguments:
- pipelineName  Name of the pipeline to convert
+ filename  Name of the pipeline to convert
 
 optional arguments:
  -h, --help    show this help message and exit
