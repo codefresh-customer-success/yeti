@@ -1,0 +1,38 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Sensor
+metadata:
+  name: ${shortName}
+spec:
+  template:
+    serviceAccountName: argo-server
+  eventBusName: codefresh-eventbus
+  dependencies:
+    - name: ${provider}-${uuid}
+      eventName: ${provider}-${uuid}
+      eventSourceName: demo
+      filters:
+        data:
+          # Add filters here
+          # based on trigger event
+  triggers:
+    - template:
+        name: pipeline
+        conditions: ${provider}-${uuid}
+        argoWorkflow:
+          operation: submit
+          source:
+            resource:
+              apiVersion: argoproj.io/v1alpha1
+              kind: WorkflowTemplate
+              metadata:
+                generateName: ${shortName}-pipeline-
+              spec:
+                arguments:
+                  parameters:
+                    # insert parameters here
+                workflowTemplateRef:
+                  name: ${shortName}-pipeline-template
+          parameters:
+            #
+            # Add match between payload and parameters
+            #
