@@ -6,6 +6,7 @@ import logging
 import yaml
 
 from classic import Classic
+from csdp import Csdp
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description='Convert Codefresh Classic pipelines')
@@ -26,7 +27,9 @@ def main():
     logging.basicConfig(format = log_format, level = args.log_level.upper())
 
     v1=Classic(args.filename)
-    Csdp.generate(v1)
+    logging.debug("V1 object: %s", v1.print())
+    v2=Csdp(v1)
+    v2.save()
 
 if __name__ == "__main__":
     main()

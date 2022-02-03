@@ -2,12 +2,8 @@
 
 
 ### IMPORTS ###
-import yaml
+from .csdp import Csdp
 
 ### FUNCTIONS ###
 
 ### CLASSES ###
-class Csdp():
-    """Class related to Codefresh Classic operations and data"""
-    def __init__(self, v1):
-        pass

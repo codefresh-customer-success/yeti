@@ -4,7 +4,6 @@
 import yaml
 import logging
 
-from .metadata import Metadata
 from .exceptions import ManifestMissingValueException
 from .exceptions import InvalidYamlAsPipeline
 
@@ -23,12 +22,37 @@ class Classic:
 
         with open(filename, "r") as stream:
             try:
-                self._manifest=yaml.safe_load(stream)
+                pipeYaml = yaml.safe_load(stream)
             except yaml.YAMLError as exc:
                 self.logger.error(exc)
                 raise InvalidYamlAsPipeline(filename)
-        if 'metadata' in self._manifest:
-            self.metadata = Metadata(self._manifest['metadata'])
-        else:
-            self.logger.error("Pipeline Manifest missing 'metadata'")
-            raise ManifestMissingValueException("Pipeline Manifest missing 'metadata'")
+
+        # Be sure we are loading a pipeline
+        if not pipeYaml['kind'] == "pipeline":
+            self.logger.critical("File should have a pipeline 'kind'")
+            raise InvalidYamlAsPipeline(filename)
+
+        self._yaml = pipeYaml
+        self._project=pipeYaml['metadata']['project']
+        self._shortName=pipeYaml['metadata']['shortName']
+        self._fullName=pipeYaml['metadata']['name']
+
+    def print(self):
+        print(f"v1.project:{self._project}")
+        print(f"v1.name:{self._shortName}")
+        print(f"v1.yaml:{self._yaml}")
+    @property
+    def yaml(self):
+        return self._yaml
+
+    @property
+    def project(self):
+        return self._project
+
+    @property
+    def name(self):
+        return self._shortName
+
+    @property
+    def fullName(self):
+        return self._fullName

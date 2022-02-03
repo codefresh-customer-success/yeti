@@ -3,6 +3,7 @@
 ### IMPORTS ###
 import logging
 
+
 from .exceptions import ManifestEmptyException, ManifestMissingValueException
 
 ### GLOBALS ###
@@ -22,16 +23,30 @@ class Metadata:
 
         self._name = None
         if 'name' in manifest_dict:
-            self._name = manifest_dict['name']
+            self.name = manifest_dict['name']
 
         self._project = None
         if 'project' in manifest_dict:
-            self._project = manifest_dict['project']
+            self.project = manifest_dict['project']
 
     @property
     def name(self):
         return self._name
 
+    @name.setter
+    def name(self, value):
+        if not isinstance(value, str):
+            raise TypeError
+        if len(value) < 3:
+            raise ValueError
+        self._name = value
+
     @property
     def project(self):
         return self._project
+
+    @project.setter
+    def project(self, value):
+        if not isinstance(value, str):
+            raise TypeError
+        self._project = value

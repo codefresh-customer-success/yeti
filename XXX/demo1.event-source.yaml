@@ -1,0 +1,30 @@
+apiVersion: argoproj.io/v1alpha1
+kind: EventSource
+metadata:
+  name: demo1
+spec:
+  eventBusName: codefresh-eventbus
+  github:
+    github-032cad24-853b-11ec-998f-acde48001122:
+      active: true
+      apiToken:
+        key: git_token
+        name: autopilot-secret
+      contentType: json
+      deleteHookOnFinish: true
+      events:
+      - push
+      insecure: false
+      repositories:
+      - names:
+        - CF-tests
+        owner: lrochette
+      webhook:
+        endpoint: /webhooks/demo/github-032cad24-853b-11ec-998f-acde48001122
+        method: POST
+        port: '80'
+  service:
+    ports:
+    - port: 80
+  template:
+    serviceAccountName: argo-server

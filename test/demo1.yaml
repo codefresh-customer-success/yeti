@@ -1,8 +1,8 @@
 version: '1.0'
 kind: pipeline
 metadata:
-  name: csdp/demo1
-  project: csdp
+  name: XXX/demo1
+  project: XXX
   projectId: 61f2ef65d6609f72bf9bb91d
   revision: 7
   accountId: 600edc0bdffeb2bc4981d15a
@@ -116,4 +116,3 @@ spec:
         - ls
         - echo $VAR1
       stage: test
-

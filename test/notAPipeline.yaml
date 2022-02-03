@@ -1,0 +1,11 @@
+version: '1.0'
+kind: other
+metadata:
+  name: csdp/demo1
+  project: csdp
+  projectId: 61f2ef65d6609f72bf9bb91d
+  revision: 7
+  accountId: 600edc0bdffeb2bc4981d15a
+  created_at: '2022-02-01T16:35:23.754Z'
+  updated_at: '2022-02-01T17:15:10.539Z'
+  shortName: demo1

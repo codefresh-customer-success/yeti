@@ -2,7 +2,7 @@
 
 ### IMPORTS ###
 import logging
-import aiofiles
+import yaml
 
 from string import Template
 
@@ -12,12 +12,12 @@ from string import Template
 
 ### CLASSES ###
 class EventSource:
-    def __init__(self, name, owner, repoName, provider, uuid)
+    def __init__(self, name, owner, repoName, provider, uuid):
         self.logger = logging.getLogger(type(self).__name__)
-        yaml_filename="./manifests/eventsource.template.yaml"
+        yaml_filename = "./manifests/eventsource.template.yaml"
 
-        with aiofiles.open(yaml_filename, mode='r') as file:
-            contents = await file.read()
+        with open(yaml_filename, mode='r') as file:
+            contents = file.read()
             template = Template(contents)
 
         values = {
@@ -33,4 +33,9 @@ class EventSource:
     @property
     def manifest(self):
         return self._manifest
-        
+
+    def save(self, project, name):
+        esFilename=f"{project}/{name}.event-source.yaml"
+        esFile = open(esFilename, "w")
+        yaml.dump(self.manifest, esFile)
+        self.logger.info("Create Event source: %s", esFilename)
