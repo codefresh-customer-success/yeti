@@ -6,7 +6,8 @@ import uuid
 import os
 
 from .eventsource import EventSource
-
+from .sensor import Sensor
+from .workflow_template import WorkflowTemplate
 ### GLOBALS ###
 
 ### FUNCTIONS ###
@@ -21,12 +22,37 @@ class Csdp:
         self.project = v1.project
         self.name = v1.name
         self.eventSource = EventSource(v1.name, "lrochette", "CF-tests", "github", uuidStr)
-
+        self.sensor = Sensor(v1.name, "github", uuidStr)
+        self.workflowTemplate = WorkflowTemplate(v1.name)
 
     def save(self):
         os.makedirs(self.project, exist_ok=True)
         self.eventSource.save(self.project, self.name)
+        self.sensor.save(self.project, self.name)
+        self.workflowTemplate.save(self.project, self.name)
 
+### Setters and getters
+    @property
+    def workflowTemplate(self):
+        return self._workflowTemplate
+
+    @workflowTemplate.setter
+    def workflowTemplate(self, value):
+        if not value.manifest['kind'] == "WorkflowTemplate":
+            self.logger.error("This is not a workflowTemplate")
+            raise TypeError
+        self._workflowTemplate=value
+
+    @property
+    def sensor(self):
+        return self._sensor
+
+    @sensor.setter
+    def sensor(self, value):
+        if not value.manifest['kind'] == "Sensor":
+            self.logger.error("This is not a sensor")
+            raise TypeError
+        self._sensor=value
 
     @property
     def eventSource(self):

@@ -1,0 +1,27 @@
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowTemplate
+metadata:
+  name: ${shortName}-pipeline-template
+spec:
+  arguments:
+    parameters:
+      #
+      # define parameters
+      #
+  entrypoint: pipeline
+  templates:
+    - name: pipeline
+      inputs:
+        parameters:
+        #
+        # define parameters
+        #
+      dag:
+        tasks:
+          #
+          # insert steps here
+          #
+    #
+    # insert additional templates here for freestyle
+    #   volume mounts?
+    #
