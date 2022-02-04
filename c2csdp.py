@@ -4,9 +4,8 @@
 import argparse
 import logging
 import yaml
-
-from classic import Classic
-from csdp import Csdp
+import classic
+import csdp
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description='Convert Codefresh Classic pipelines')
@@ -26,9 +25,9 @@ def main():
     log_format = "%(asctime)s:%(levelname)s:%(name)s.%(funcName)s: %(message)s"
     logging.basicConfig(format = log_format, level = args.log_level.upper())
 
-    v1=Classic(args.filename)
+    v1=classic.Classic(args.filename)
     logging.debug("V1 object: %s", v1.print())
-    v2=Csdp(v1)
+    v2=csdp.Csdp(v1)
     v2.save()
 
 if __name__ == "__main__":

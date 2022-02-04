@@ -13,3 +13,5 @@ class ManifestEmptyException(Exception):
     pass
 class InvalidYamlAsPipeline(Exception):
     pass
+class OnlySupportGitTriggerException(Exception):
+    pass
