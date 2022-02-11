@@ -45,6 +45,7 @@ class Classic:
         if self._mode == "parallel":
             self.logger.critical("Parallel mode not supported")
             raise ParallelModeNotSupported(filename)
+            
     def print(self):
         print(f"v1.project:{self._project}")
         print(f"v1.name:{self._shortName}")
