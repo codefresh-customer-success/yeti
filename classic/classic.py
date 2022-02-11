@@ -6,6 +6,7 @@ import logging
 
 from .exceptions import ManifestMissingValueException
 from .exceptions import InvalidYamlAsPipeline
+from .exceptions import ParallelModeNotSupported
 
 ### GLOBALS ###
 
@@ -36,6 +37,14 @@ class Classic:
         self._shortName=pipeYaml['metadata']['shortName']
         self._fullName=pipeYaml['metadata']['name']
 
+        # No parallel mode for now
+        if "mode" in pipeYaml['spec']:
+            self._mode=pipeYaml['spec']['mode']
+        else:
+            self._mode="serial"
+        if self._mode == "parallel":
+            self.logger.critical("Parallel mode not supported")
+            raise ParallelModeNotSupported(filename)
     def print(self):
         print(f"v1.project:{self._project}")
         print(f"v1.name:{self._shortName}")
