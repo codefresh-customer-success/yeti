@@ -16,3 +16,6 @@ optional arguments:
  --debug       debug mode
  --cli CLI     path to the Codefresh classic CLI
 ```
+## Restrictions
+
+* Parallel mode is not supported
