@@ -51,10 +51,10 @@ spec:
   terminationPolicy: []
   externalResources: []
   steps:
-    test:
-      title: Running test
-      type: freestyle
-      image: 'ubuntu:latest'
-      commands:
-        - ls
-      stage: test
+    clone:
+      title: Cloning repository
+      type: foobar
+      repo: '${{CF_REPO_OWNER}}/${{CF_REPO_NAME}}'
+      revision: '${{CF_BRANCH}}'
+      git: github
+      stage: clone

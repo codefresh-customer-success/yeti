@@ -59,6 +59,9 @@ class Csdp:
         }
         self.eventSource.manifest['spec'][trig.provider][trig.provider + "-" + self.uuid]=block
 
+    def convertStep(self, step):
+        pass
+        
 ### Setters and getters
     @property
     def workflowTemplate(self):

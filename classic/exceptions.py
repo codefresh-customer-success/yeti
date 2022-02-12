@@ -17,9 +17,11 @@ class OnlySupportGitTriggerException(Exception):
     pass
 class OnlySupportGithubProvider(Exception):
     pass
-
+class StepTypeNotSupported(Exception):
+    pass
 class ParallelModeNotSupported(Exception):
     pass
-
+class ImageRequired(Exception):
+    pass
 class EmptyObjectException(Exception):
     pass

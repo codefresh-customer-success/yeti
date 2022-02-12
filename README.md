@@ -19,3 +19,7 @@ optional arguments:
 ## Restrictions
 
 * Parallel mode is not supported
+* support only GitHub source
+* support only git type
+* support only freestyle steps
+* stages are totally ignored

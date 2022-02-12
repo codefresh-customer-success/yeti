@@ -7,6 +7,7 @@ import logging
 from .exceptions import ManifestMissingValueException
 from .exceptions import InvalidYamlAsPipeline
 from .exceptions import ParallelModeNotSupported
+from .step import Step
 
 ### GLOBALS ###
 
@@ -32,6 +33,7 @@ class Classic:
             self.logger.critical("File should have a pipeline 'kind'")
             raise InvalidYamlAsPipeline(filename)
 
+        self.logger.debug(pipeYaml)
 
         self._yaml = pipeYaml
         self._project=pipeYaml['metadata']['project']
@@ -39,6 +41,9 @@ class Classic:
         self._fullName=pipeYaml['metadata']['name']
         # spec info
         self._triggers=pipeYaml['spec']['triggers']
+        self._steps=[]
+        for s in pipeYaml['spec']['steps']:
+            self.addStep(s, pipeYaml['spec']['steps'][s])
 
         # No parallel mode for now
         if "mode" in pipeYaml['spec']:
@@ -49,12 +54,15 @@ class Classic:
             self.logger.critical("Parallel mode not supported")
             raise ParallelModeNotSupported(self._fullName)
 
+    def addStep(self, name, block):
+        self._steps.append(Step(name, block))
+
     def print(self):
         print(f"v1.project:{self._project}")
         print(f"v1.name:{self._shortName}")
         #print(f"v1.yaml:{self._yaml}")
     @property
-    def yaml(self):
+    def mani(self):
         return self._yaml
 
     @property
@@ -72,3 +80,7 @@ class Classic:
     @property
     def triggers(self):
         return self._triggers
+
+    @property
+    def steps(self):
+        return self._steps
