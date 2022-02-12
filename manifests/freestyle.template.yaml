@@ -1,0 +1,10 @@
+- name: ${name}
+  script:
+    image: ${image}
+    workingDir: {dir}
+    command: bash
+    source : |
+      ${commands}
+    volumeMounts:
+    - name: codefresh-volume
+      mountPath: /codefresh/volume

@@ -25,3 +25,5 @@ class ImageRequired(Exception):
     pass
 class EmptyObjectException(Exception):
     pass
+class VariableNotSupportedInField(Exception):
+    pass

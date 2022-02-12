@@ -13,6 +13,7 @@ from .workflow_template import WorkflowTemplate
 ### GLOBALS ###
 
 ### FUNCTIONS ###
+createFreestyleBlock(name, image, dir, commands)
 
 ### CLASSES ###
 class Csdp:
@@ -59,9 +60,15 @@ class Csdp:
         }
         self.eventSource.manifest['spec'][trig.provider][trig.provider + "-" + self.uuid]=block
 
+    #
+    # Step is converted into:
+    #  - a template in the workflow template
+    #  - a call in the "pipeline" workflow
     def convertStep(self, step):
-        pass
-        
+        if step.type == "freestyle":
+            templateBlock=createFreestyleBlock(step.name, step.image, step.cwd, step.commands)
+
+
 ### Setters and getters
     @property
     def workflowTemplate(self):

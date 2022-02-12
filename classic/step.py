@@ -7,7 +7,7 @@
 ### IMPORTS ###
 import logging
 from .exceptions import StepTypeNotSupported
-
+from .exceptions import VariableNotSupportedInField
 ### GLOBALS ###
 
 ### FUNCTIONS ###
@@ -25,6 +25,7 @@ class Step:
         self.type = block['type']
         self.image = block['image']
         self.commands = block['commands']
+        self.cwd = block['working_directory']
     #
     # Setters and getters
     #
@@ -65,3 +66,12 @@ class Step:
     @commands.setter
     def commands(self, value = None):
         self._commands = value
+
+    @property
+    def cwd(self):
+        return self._cwd
+    @cwd.setter
+    def cwd(self, value = '/codefresh/volume'):
+        if value.contains('$'):
+            raise VariableNotSupportedInField("working_directory")
+        self._cwd = value
