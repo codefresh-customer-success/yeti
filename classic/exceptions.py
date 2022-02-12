@@ -15,5 +15,11 @@ class InvalidYamlAsPipeline(Exception):
     pass
 class OnlySupportGitTriggerException(Exception):
     pass
+class OnlySupportGithubProvider(Exception):
+    pass
+
 class ParallelModeNotSupported(Exception):
+    pass
+
+class EmptyObjectException(Exception):
     pass

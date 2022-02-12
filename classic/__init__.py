@@ -5,7 +5,7 @@
 from .exceptions import ManifestMissingValueException
 from .exceptions import InvalidYamlAsPipeline
 from .classic import Classic
-
+from .trigger import Trigger
 ### GLOBALS ###
 
 ### FUNCTIONS ###

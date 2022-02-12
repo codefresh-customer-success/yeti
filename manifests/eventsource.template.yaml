@@ -10,13 +10,6 @@ spec:
   template:
     serviceAccountName: argo-server
   ${provider}:
-    ${provider}-${uuid}:
-      events:
-        - push
-      repositories:
-        - owner: ${owner}
-          names:
-            - ${repoName}
       webhook:
         port: '80'
         method: POST

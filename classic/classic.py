@@ -32,10 +32,13 @@ class Classic:
             self.logger.critical("File should have a pipeline 'kind'")
             raise InvalidYamlAsPipeline(filename)
 
+
         self._yaml = pipeYaml
         self._project=pipeYaml['metadata']['project']
         self._shortName=pipeYaml['metadata']['shortName']
         self._fullName=pipeYaml['metadata']['name']
+        # spec info
+        self._triggers=pipeYaml['spec']['triggers']
 
         # No parallel mode for now
         if "mode" in pipeYaml['spec']:
@@ -44,12 +47,12 @@ class Classic:
             self._mode="serial"
         if self._mode == "parallel":
             self.logger.critical("Parallel mode not supported")
-            raise ParallelModeNotSupported(filename)
-            
+            raise ParallelModeNotSupported(self._fullName)
+
     def print(self):
         print(f"v1.project:{self._project}")
         print(f"v1.name:{self._shortName}")
-        print(f"v1.yaml:{self._yaml}")
+        #print(f"v1.yaml:{self._yaml}")
     @property
     def yaml(self):
         return self._yaml
@@ -65,3 +68,7 @@ class Classic:
     @property
     def fullName(self):
         return self._fullName
+
+    @property
+    def triggers(self):
+        return self._triggers

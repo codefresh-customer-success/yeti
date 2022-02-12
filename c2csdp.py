@@ -26,8 +26,14 @@ def main():
     logging.basicConfig(format = log_format, level = args.log_level.upper())
 
     v1=classic.Classic(args.filename)
-    logging.debug("V1 object: %s", v1.print())
     v2=csdp.Csdp(v1)
+    for obj in v1.triggers:
+        trig = classic.Trigger(obj)
+        logging.info("Processing Trigger %s", trig.name)
+        v2.convertTrigger(trig)
+    # for step in v2.steps:
+    #     v2.convertStep(step)
+
     v2.save()
 
 if __name__ == "__main__":

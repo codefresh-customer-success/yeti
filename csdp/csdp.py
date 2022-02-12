@@ -8,6 +8,8 @@ import os
 from .eventsource import EventSource
 from .sensor import Sensor
 from .workflow_template import WorkflowTemplate
+#from ..classic import Trigger
+
 ### GLOBALS ###
 
 ### FUNCTIONS ###
@@ -17,12 +19,11 @@ class Csdp:
     """Class related to Codefresh Classic operations and data"""
     def __init__(self, v1 = None):
         self.logger = logging.getLogger(type(self).__name__)
-        uuidStr=str(uuid.uuid1())
-
+        self.uuid=str(uuid.uuid1())
         self.project = v1.project
         self.name = v1.name
-        self.eventSource = EventSource(v1.name, "lrochette", "CF-tests", "github", uuidStr)
-        self.sensor = Sensor(v1.name, "github", uuidStr)
+        self.eventSource = EventSource(name=v1.name, provider="github", uuid=self.uuid)
+        self.sensor = Sensor(v1.name, "github", self.uuid)
         self.workflowTemplate = WorkflowTemplate(v1.name)
 
     def save(self):
@@ -30,6 +31,33 @@ class Csdp:
         self.eventSource.save(self.project, self.name)
         self.sensor.save(self.project, self.name)
         self.workflowTemplate.save(self.project, self.name)
+
+    def convertTrigger(self, trig):
+        #
+        # Add to EventSource:
+
+        # spec
+        #   github:
+        #     github-d8a7c62d-2f2a-40c0-a0d4-139c957fd762:
+        #       events:
+        #         - push
+        #       repositories:
+        #         - owner: lrochette
+        #           names:
+        #             - express-microservice
+
+        (owner,repoName) = trig.repo.split('/')
+        self.logger.debug("Convert Trigger %s", self.name)
+        self.logger.debug("  owner %s", owner)
+        self.logger.debug("  repo name %s", repoName)
+        block = {
+            "events": trig.events ,
+            "repositories": [{
+                "owner": owner,
+                "names": [repoName]
+            }]
+        }
+        self.eventSource.manifest['spec'][trig.provider][trig.provider + "-" + self.uuid]=block
 
 ### Setters and getters
     @property
@@ -88,3 +116,11 @@ class Csdp:
         if len(value) < 3:
             raise ValueError
         self._name = value
+
+    @property
+    def uuid(self):
+        return self._uuid
+
+    @uuid.setter
+    def uuid(self, value):
+        self._uuid = value

@@ -18,12 +18,12 @@ class Metadata:
         if not manifest_dict:
             raise ManifestEmptyException()
 
-        self.logger.info("Manifest Metadata: %s", manifest_dict)
-        self.logger.info("Manifest Metadata name: %s", manifest_dict['name'])
+        self.logger.debug("Manifest Metadata: %s", manifest_dict)
 
         self._name = None
         if 'name' in manifest_dict:
             self.name = manifest_dict['name']
+            self.logger.info("Manifest Metadata name: %s", manifest_dict['name'])
 
         self._project = None
         if 'project' in manifest_dict:

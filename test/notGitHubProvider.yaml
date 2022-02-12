@@ -1,0 +1,118 @@
+version: '1.0'
+kind: pipeline
+metadata:
+  name: XXX/demo1
+  project: XXX
+  projectId: 61f2ef65d6609f72bf9bb91d
+  revision: 7
+  accountId: 600edc0bdffeb2bc4981d15a
+  created_at: '2022-02-01T16:35:23.754Z'
+  updated_at: '2022-02-01T17:15:10.539Z'
+  shortName: demo1
+  deprecate: {}
+  labels:
+    tags: []
+  originalYamlString: |+
+    # Example to run the converter
+
+    version: "1.0"
+    # Stages can help you organize your steps in stages
+    stages:
+      - "clone"
+      - "build"
+      - "test"
+
+    steps:
+      clone:
+        title: "Cloning repository"
+        type: "git-clone"
+        repo: "${{CF_REPO_OWNER}}/${{CF_REPO_NAME}}"
+        # CF_BRANCH value is auto set when pipeline is triggered
+        # Learn more at codefresh.io/docs/docs/codefresh-yaml/variables/
+        revision: "${{CF_BRANCH}}"
+        git: "github"
+        stage: "clone"
+
+      build:
+        title: "Building Docker image"
+        type: "build"
+        image_name: "lrochette/yeti"
+        working_directory: "${{clone}}"
+        tag: "${{CF_BRANCH_TAG_NORMALIZED}}"
+        dockerfile: "gresearch/Dockerfile"
+        registry: docker-lr
+        stage: "build"
+
+      test:
+        title: "Running test"
+        type: "freestyle" # Run any command
+        image: "ubuntu:latest" # The image in which command will be executed
+        working_directory: "${{clone}}" # Running command where code cloned
+        commands:
+          - "ls"
+          - echo $VAR1
+        stage: "test"
+
+  id: 61f9614bd6609f21699bc206
+spec:
+  triggers:
+    - name: lrochette/CF-tests
+      type: git
+      repo: lrochette/CF-tests
+      events:
+        - push.heads
+      pullRequestAllowForkEvents: false
+      commentRegex: /.*/gi
+      branchRegex: /.*/gi
+      branchRegexInput: regex
+      provider: bitbucket
+      disabled: false
+      options:
+        noCache: false
+        noCfCache: false
+        resetVolume: false
+      context: github
+      contexts: []
+      verified: true
+      status: verified
+      lastExecutionDate: '2022-02-01T17:31:04.811Z'
+      id: 61f9614dd6609fdb669bc207
+      endpoint: 'https://g.codefresh.io/api/providers/github/hook/AbV2oP2l0Q'
+      secret: 9Ugdk3MgW4icmtMc
+  stages:
+    - clone
+    - build
+    - test
+  variables:
+    - key: VAR1
+      value: value1
+      encrypted: false
+  contexts: []
+  terminationPolicy: []
+  externalResources: []
+  steps:
+    clone:
+      title: Cloning repository
+      type: git-clone
+      repo: '${{CF_REPO_OWNER}}/${{CF_REPO_NAME}}'
+      revision: '${{CF_BRANCH}}'
+      git: github
+      stage: clone
+    build:
+      title: Building Docker image
+      type: build
+      image_name: lrochette/yeti
+      working_directory: '${{clone}}'
+      tag: '${{CF_BRANCH_TAG_NORMALIZED}}'
+      dockerfile: gresearch/Dockerfile
+      registry: docker-lr
+      stage: build
+    test:
+      title: Running test
+      type: freestyle
+      image: 'ubuntu:latest'
+      working_directory: '${{clone}}'
+      commands:
+        - ls
+        - echo $VAR1
+      stage: test
