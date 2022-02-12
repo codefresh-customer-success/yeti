@@ -4,6 +4,9 @@
 import logging
 import uuid
 import os
+import yaml
+
+from string import Template
 
 from .eventsource import EventSource
 from .sensor import Sensor
@@ -13,7 +16,25 @@ from .workflow_template import WorkflowTemplate
 ### GLOBALS ###
 
 ### FUNCTIONS ###
-createFreestyleBlock(name, image, dir, commands)
+def createFreestyleBlock(name, image, dir, commands):
+    yaml_filename = "./manifests/freestyle.template.yaml"
+    with open(yaml_filename, mode='r') as file:
+        contents = file.read()
+        template = Template(contents)
+    values = {
+        'name': name,
+        'image': image,
+        'dir': dir,
+        'commands': commands
+    }
+    yamlBlock=template.substitute(values)
+    return yaml.safe_load(yamlBlock)
+
+def createTaskBlock(name, previous):
+    block = { "name": name, "template": name}
+    if previous:
+        block['depends']=previous
+    return block
 
 ### CLASSES ###
 class Csdp:
@@ -64,11 +85,12 @@ class Csdp:
     # Step is converted into:
     #  - a template in the workflow template
     #  - a call in the "pipeline" workflow
-    def convertStep(self, step):
+    def convertStep(self, step, previousStep = None):
         if step.type == "freestyle":
             templateBlock=createFreestyleBlock(step.name, step.image, step.cwd, step.commands)
-
-
+            self.workflowTemplate.manifest['spec']['templates'].append(templateBlock)
+            taskBlock=createTaskBlock(step.name, previousStep)
+            self.workflowTemplate.manifest['spec']['templates'][0]['dag']['tasks'].append(taskBlock)
 ### Setters and getters
     @property
     def workflowTemplate(self):

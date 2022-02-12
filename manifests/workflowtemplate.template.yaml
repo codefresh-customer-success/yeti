@@ -11,13 +11,13 @@ spec:
   entrypoint: pipeline
   templates:
     - name: pipeline
-      inputs:
-        parameters:
+      # inputs:
+      #   parameters:
         #
         # define parameters
         #
       dag:
-        tasks:
+        tasks: []
           #
           # insert steps here
           #

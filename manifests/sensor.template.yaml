@@ -9,7 +9,7 @@ spec:
   dependencies:
     - name: ${provider}-${uuid}
       eventName: ${provider}-${uuid}
-      eventSourceName: demo
+      eventSourceName: ${shortName}
       filters:
         data:
           # Add filters here

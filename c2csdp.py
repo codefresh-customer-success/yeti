@@ -31,8 +31,10 @@ def main():
         trig = classic.Trigger(obj)
         logging.info("Processing Trigger %s", trig.name)
         v2.convertTrigger(trig)
+    previous = None
     for step in v1.steps:
-        v2.convertStep(step)
+        v2.convertStep(step, previous)
+        previous = step.name
 
     v2.save()
 

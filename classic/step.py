@@ -22,10 +22,16 @@ class Step:
         self.logger.debug("Step Block : %s", block)
 
         self.name = name
-        self.type = block['type']
+        if 'type' in block:
+            self.type = block['type']
+        else:
+            self._type="freestyle"
         self.image = block['image']
         self.commands = block['commands']
-        self.cwd = block['working_directory']
+        if 'working_directory' in block:
+            self.cwd = block['working_directory']
+        else:
+            self.cwd='/codefresh/volume'
     #
     # Setters and getters
     #
@@ -72,6 +78,6 @@ class Step:
         return self._cwd
     @cwd.setter
     def cwd(self, value = '/codefresh/volume'):
-        if value.contains('$'):
+        if '$' in value:
             raise VariableNotSupportedInField("working_directory")
         self._cwd = value
