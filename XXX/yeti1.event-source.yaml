@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: EventSource
 metadata:
-  name: demo1
+  name: yeti1
 spec:
   eventBusName: codefresh-eventbus
   github:
@@ -11,7 +11,7 @@ spec:
       name: autopilot-secret
     contentType: json
     deleteHookOnFinish: true
-    github-21743606-8db2-11ec-9e21-acde48001122:
+    github-d02dfd38-8dc3-11ec-ab7b-acde48001122:
       events:
       - push.heads
       repositories:
@@ -20,7 +20,7 @@ spec:
         owner: lrochette
     insecure: false
     webhook:
-      endpoint: /webhooks/demo/github-21743606-8db2-11ec-9e21-acde48001122
+      endpoint: /webhooks/XXX/github-d02dfd38-8dc3-11ec-ab7b-acde48001122
       method: POST
       port: '80'
   service:
