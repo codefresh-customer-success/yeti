@@ -1,0 +1,26 @@
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowTemplate
+metadata:
+  name: demo1-pipeline-template
+spec:
+  arguments:
+    parameters: null
+  entrypoint: pipeline
+  templates:
+  - dag:
+      tasks:
+      - name: test
+        template: test
+    name: pipeline
+  - name: test
+    script:
+      command: bash
+      image: ubuntu:latest
+      source: '[''ls'']
+
+        '
+      volumeMounts:
+      - mountPath: /codefresh/volume
+        name: codefresh-volume
+      workingDir:
+        dir: null

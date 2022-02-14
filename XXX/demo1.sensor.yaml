@@ -1,0 +1,32 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Sensor
+metadata:
+  name: demo1
+spec:
+  dependencies:
+  - eventName: github-21743606-8db2-11ec-9e21-acde48001122
+    eventSourceName: demo1
+    filters:
+      data: null
+    name: github-21743606-8db2-11ec-9e21-acde48001122
+  eventBusName: codefresh-eventbus
+  template:
+    serviceAccountName: argo-server
+  triggers:
+  - template:
+      argoWorkflow:
+        operation: submit
+        parameters: null
+        source:
+          resource:
+            apiVersion: argoproj.io/v1alpha1
+            kind: WorkflowTemplate
+            metadata:
+              generateName: demo1-pipeline-
+            spec:
+              arguments:
+                parameters: null
+              workflowTemplateRef:
+                name: demo1-pipeline-template
+      conditions: github-21743606-8db2-11ec-9e21-acde48001122
+      name: pipeline
