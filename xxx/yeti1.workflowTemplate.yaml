@@ -19,10 +19,13 @@ spec:
     name: pipeline
   - name: test
     script:
-      command: [sh]
+      command:
+      - sh
       image: ubuntu:latest
-      source: |
-        ls
+      source:
+      - echo bar
+      - ls
+      - echo foo
       volumeMounts:
       - mountPath: /codefresh/volume
         name: codefresh-volume
