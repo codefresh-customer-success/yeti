@@ -47,6 +47,12 @@ spec:
               volumeClaimTemplates:
               - metadata:
                   name: codefresh-volume
+                spec:
+                  accessModes:
+                    - ReadWriteOnce
+                  resources:
+                    requests:
+                      storage: 10Gi
               workflowTemplateRef:
                 name: yeti1-pipeline-template
       conditions: github-35e07298-8e8f-11ec-9880-acde48001122
