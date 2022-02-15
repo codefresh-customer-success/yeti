@@ -43,8 +43,7 @@ class Ingress:
                     'project': project
                 }
                 ingressYaml=template.substitute(values)
-                self._manifest = yaml.safe_load(ingressYaml)        
-        self.logger.debug("Ingress code: %s", self._manifest)
+                self._manifest = yaml.safe_load(ingressYaml)
 
     @property
     def manifest(self):
@@ -54,6 +53,5 @@ class Ingress:
         ingressFilename=f"{project}/{project}.ingress.yaml"
         ingressFile = open(ingressFilename, "w")
         yaml.dump(self.manifest, ingressFile)
-#        ingressFile.write("\n")
         ingressFile.close()
         self.logger.info("Create Ingress: %s", ingressFilename)

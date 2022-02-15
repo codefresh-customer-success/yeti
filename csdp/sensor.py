@@ -12,7 +12,7 @@ from string import Template
 
 ### CLASSES ###
 class Sensor:
-    def __init__(self, name , provider, uuid):
+    def __init__(self, name , provider, uuid, size):
         self.logger = logging.getLogger(type(self).__name__)
         yaml_filename = "./manifests/sensor.template.yaml"
 
@@ -21,6 +21,7 @@ class Sensor:
             template = Template(contents)
 
         values = {
+            'size': size,
             'shortName': name,
             'provider': provider,
             'uuid': uuid

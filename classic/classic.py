@@ -37,8 +37,6 @@ class Classic:
             self.logger.critical("File should have a pipeline 'kind'")
             raise InvalidYamlAsPipeline(filename)
 
-        self.logger.debug(pipeYaml)
-
         self._yaml = pipeYaml
         self._project=utils.safeName(pipeYaml['metadata']['project'])
         self._shortName=utils.safeName(pipeYaml['metadata']['shortName'])

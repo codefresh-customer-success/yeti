@@ -16,12 +16,14 @@ from .workflow_template import WorkflowTemplate
 ### GLOBALS ###
 
 ### FUNCTIONS ###
-def createFreestyleBlock(name, image, dir, commands):
+def createFreestyleBlock(name, image, dir, shell, commands):
+    logging.debug("createFreestyleBlock - dir: %s", dir)
     yaml_filename = "./manifests/freestyle.template.yaml"
     with open(yaml_filename, mode='r') as file:
         contents = file.read()
         template = Template(contents)
     values = {
+        'shell': shell,
         'name': name,
         'image': image,
         'dir': dir,
@@ -39,15 +41,16 @@ def createTaskBlock(name, previous):
 ### CLASSES ###
 class Csdp:
     """Class related to Codefresh Classic operations and data"""
-    def __init__(self, v1, ingressUrl):
+    def __init__(self, v1, ingressUrl, volumeSize):
         self.logger = logging.getLogger(type(self).__name__)
         self.uuid=str(uuid.uuid1())
         self.ingressUrl=ingressUrl
         self.project = v1.project
         self.name = v1.name
+        self.volumeSize = volumeSize
         self.eventSource = EventSource(name=v1.name, project=v1.project,
             provider="github", uuid=self.uuid)
-        self.sensor = Sensor(v1.name, "github", self.uuid)
+        self.sensor = Sensor(v1.name, "github", self.uuid, self.volumeSize)
         self.workflowTemplate = WorkflowTemplate(v1.name)
         self.ingress = Ingress(v1.project)
 
@@ -86,7 +89,7 @@ class Csdp:
         self.eventSource.manifest['spec'][trig.provider]=yaml.safe_load(eventYaml)
 
         block = {
-            "path": f"/webhooks/{self.project}/${self.name}/{trig.provider}-{self.uuid}",
+            "path": f"/webhooks/{self.project}/{self.name}/{trig.provider}-{self.uuid}",
             "backend": {
                 "service": {
                     "name": f"{self.name}-eventsource-svc",
@@ -105,7 +108,8 @@ class Csdp:
     #  - a call in the "pipeline" workflow
     def convertStep(self, step, previousStep = None):
         if step.type == "freestyle":
-            templateBlock=createFreestyleBlock(step.name, step.image, step.cwd, step.commands)
+            templateBlock=createFreestyleBlock(name=step.name, image=step.image,
+                dir=step.cwd, shell=step.shell, commands=step.commands)
             self.workflowTemplate.manifest['spec']['templates'].append(templateBlock)
             taskBlock=createTaskBlock(step.name, previousStep)
             self.workflowTemplate.manifest['spec']['templates'][0]['dag']['tasks'].append(taskBlock)
@@ -159,9 +163,6 @@ class Csdp:
 
     @ingress.setter
     def ingress(self, value):
-        self.logger.debug("Ingress setter value: %s", value)
-        self.logger.debug("Ingress setter manifest: %s", value.manifest)
-        self.logger.debug("Ingress setter kind: %s", value.manifest['kind'])
         if not value.manifest['kind'] == "Ingress":
             self.logger.error("This is not a ingress")
             raise TypeError
@@ -212,6 +213,16 @@ class Csdp:
         if len(value) < 3:
             raise ValueError
         self._name = value
+
+    @property
+    def volumeSize(self):
+        return self._volumeSize
+
+    @volumeSize.setter
+    def volumeSize(self, value):
+        if not isinstance(value, int):
+            raise TypeError
+        self._volumeSize = value
 
     @property
     def uuid(self):

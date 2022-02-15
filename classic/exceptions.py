@@ -31,3 +31,5 @@ class InvalidYamlAsIngress(Exception):
     pass
 class OnlyOneEventSupportbyTrigger(Exception):
     pass
+class ShellTypeNotSupported(Exception):
+    pass

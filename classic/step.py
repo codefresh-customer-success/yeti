@@ -8,6 +8,7 @@
 import logging
 from .exceptions import StepTypeNotSupported
 from .exceptions import VariableNotSupportedInField
+from .exceptions import  ShellTypeNotSupported
 ### GLOBALS ###
 
 ### FUNCTIONS ###
@@ -18,16 +19,20 @@ class Step:
 
         self.logger = logging.getLogger(type(self).__name__)
 
-        self.logger.debug("Step Name : %s", name)
-        self.logger.debug("Step Block : %s", block)
+        self.logger.debug("Creating New Step: %s", name)
 
         self.name = name
         self._type="freestyle"
         if 'type' in block:
             self.type = block['type']
 
+        self._shell="sh"
+        if 'shell' in block:
+            self.shell = block['shell']
+
         self.image = block['image']
         self.commands = block['commands']
+
         self._cwd='/codefresh/volume'
         if 'working_directory' in block:
             self.cwd = block['working_directory']
@@ -56,6 +61,17 @@ class Step:
         if not value == "freestyle":
             raise StepTypeNotSupported(value)
         self._type = value
+
+    @property
+    def shell(self):
+        return self._shell
+    @shell.setter
+    def shell(self, value):
+        if not isinstance(value, str):
+            raise TypeError
+        if not value in ["sh", "bash"]:
+            raise ShellTypeNotSupported(value)
+        self._shell = value
 
     @property
     def image(self):

@@ -16,6 +16,8 @@ def parse_arguments():
         help='set the log level')
     parser.add_argument('--ingress-host', required=True,
         help='Ingress URL - Required')
+    parser.add_argument('--volume-size', default='20', type=int,
+        help='Size (in Gi) of the volume to allocate')
     args = parser.parse_args()
     return args
 #
@@ -28,7 +30,7 @@ def main():
     logging.basicConfig(format = log_format, level = args.log_level.upper())
 
     v1=classic.Classic(args.filename)
-    v2=csdp.Csdp(v1, args.ingress_host)
+    v2=csdp.Csdp(v1, args.ingress_host, args.volume_size)
 
     for obj in v1.triggers:
         trig = classic.Trigger(obj)

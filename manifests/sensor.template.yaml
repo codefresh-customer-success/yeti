@@ -32,6 +32,15 @@ spec:
                     # insert parameters here
                 workflowTemplateRef:
                   name: ${shortName}-pipeline-template
+                volumeClaimTemplates:
+                  - metadata:
+                      name: codefresh-volume
+                    spec:
+                      accessModes:
+                        - ReadWriteOnce
+                      resources:
+                        requests:
+                          storage: ${size}Gi
           parameters: []
             #
             # Add match between payload and parameters

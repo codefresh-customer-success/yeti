@@ -22,8 +22,6 @@ class Trigger:
         if not trig:
             raise EmptyObjectException("trigger")
 
-        self.logger.debug("Trigger block : %s", trig)
-
         self._name = None
         if 'name' in trig:
             self.name = trig['name']
@@ -87,7 +85,6 @@ class Trigger:
         return self._events
     @events.setter
     def events(self, value):
-        self.logger.debug("Trigger setter for event: %s", value)
         if len(value) > 1:
             raise OnlyOneEventSupportbyTrigger
         event=value[0]
