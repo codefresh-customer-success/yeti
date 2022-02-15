@@ -4,11 +4,11 @@ metadata:
   name: yeti1
 spec:
   dependencies:
-  - eventName: github-d02dfd38-8dc3-11ec-ab7b-acde48001122
+  - eventName: github-cd192e9a-8df2-11ec-9968-acde48001122
     eventSourceName: yeti1
     filters:
       data: null
-    name: github-d02dfd38-8dc3-11ec-ab7b-acde48001122
+    name: github-cd192e9a-8df2-11ec-9968-acde48001122
   eventBusName: codefresh-eventbus
   template:
     serviceAccountName: argo-server
@@ -28,5 +28,5 @@ spec:
                 parameters: null
               workflowTemplateRef:
                 name: yeti1-pipeline-template
-      conditions: github-d02dfd38-8dc3-11ec-ab7b-acde48001122
+      conditions: github-cd192e9a-8df2-11ec-9968-acde48001122
       name: pipeline

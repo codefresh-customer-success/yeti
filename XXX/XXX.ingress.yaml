@@ -1,7 +1,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: XXX-delivery-pipelines
+  name: xxx-delivery-pipelines
 spec:
   ingressClassName: nginx
   rules:
@@ -12,5 +12,5 @@ spec:
             name: yeti1-eventsource-svc
             port:
               number: 80
-        path: webhooks/XXX/github-d02dfd38-8dc3-11ec-ab7b-acde48001122
+        path: /webhooks/xxx/$yeti1/github-cd192e9a-8df2-11ec-9968-acde48001122
         pathType: ImplementationSpecific

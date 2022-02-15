@@ -5,24 +5,25 @@ metadata:
 spec:
   eventBusName: codefresh-eventbus
   github:
-    active: true
-    apiToken:
-      key: git_token
-      name: autopilot-secret
-    contentType: json
-    deleteHookOnFinish: true
-    github-d02dfd38-8dc3-11ec-ab7b-acde48001122:
+    github-cd192e9a-8df2-11ec-9968-acde48001122:
+      active: true
+      apiToken:
+        key: git_token
+        name: autopilot-secret
+      contentType: json
+      deleteHookOnFinish: true
       events:
       - push.heads
+      insecure: false
       repositories:
       - names:
         - yeti-test
         owner: lrochette
-    insecure: false
-    webhook:
-      endpoint: /webhooks/XXX/github-d02dfd38-8dc3-11ec-ab7b-acde48001122
-      method: POST
-      port: '80'
+      webhook:
+        endpoint: /webhooks/xxx/yeti1/github-cd192e9a-8df2-11ec-9968-acde48001122
+        method: POST
+        port: '80'
+        url: https://lrcsdp.support.cf-cd.com
   service:
     ports:
     - port: 80
