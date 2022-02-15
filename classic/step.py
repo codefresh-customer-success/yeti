@@ -6,14 +6,18 @@
 
 ### IMPORTS ###
 import logging
+import string
+
 from .exceptions import StepTypeNotSupported
 from .exceptions import VariableNotSupportedInField
 from .exceptions import  ShellTypeNotSupported
+
 ### GLOBALS ###
 
 ### FUNCTIONS ###
 
 ### CLASSES ###
+
 class Step:
     def __init__(self, name = None, block = None):
 
@@ -71,7 +75,7 @@ class Step:
             raise TypeError
         if not value in ["sh", "bash"]:
             raise ShellTypeNotSupported(value)
-        self._shell = value
+        self._shell = f"[{value}]"
 
     @property
     def image(self):
@@ -87,7 +91,10 @@ class Step:
         return self._commands
     @commands.setter
     def commands(self, value = None):
-        self._commands = value
+        str=""
+        for line in value:
+            str += f"      {line}\n"
+        self._commands=str
 
     @property
     def cwd(self):

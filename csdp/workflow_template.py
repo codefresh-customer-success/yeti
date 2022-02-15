@@ -7,6 +7,12 @@ import yaml
 from string import Template
 
 ### GLOBALS ###
+def str_presenter(dumper, data):
+    """configures yaml for dumping multiline strings
+    Ref: https://stackoverflow.com/questions/8640959/how-can-i-control-what-scalar-form-pyyaml-uses-for-my-data"""
+    if len(data.splitlines()) > 1:  # check for multiline string
+        return dumper.represent_scalar('tag:yaml.org,2002:str', data, style='|')
+    return dumper.represent_scalar('tag:yaml.org,2002:str', data)
 
 ### FUNCTIONS ###
 
@@ -24,6 +30,8 @@ class WorkflowTemplate:
             'shortName': name
         }
         workflowTemplateYaml=template.substitute(values)
+        yaml.add_representer(str, str_presenter)
+        yaml.representer.SafeRepresenter.add_representer(str, str_presenter) # to use with safe_dum
         self._manifest=yaml.safe_load(workflowTemplateYaml)
 
     @property

@@ -3,8 +3,7 @@
     image: ${image}
     workingDir: ${dir}
     command: [${shell}]
-    source : |
-${commands}
+    source : ${commands}
     volumeMounts:
     - name: codefresh-volume
       mountPath: /codefresh/volume

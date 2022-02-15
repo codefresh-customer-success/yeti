@@ -1,10 +1,10 @@
   name: ${name}
-  script:
+  container:
     image: ${image}
     workingDir: ${dir}
     command: [${shell}]
-    source : |
-${commands}
+    args : \|
+      ${commands}
     volumeMounts:
     - name: codefresh-volume
       mountPath: /codefresh/volume

@@ -56,5 +56,7 @@ spec:
       type: freestyle
       image: 'ubuntu:latest'
       commands:
+        - echo bar
         - ls
+        - echo foo
       stage: test

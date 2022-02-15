@@ -30,6 +30,7 @@ def createFreestyleBlock(name, image, dir, shell, commands):
         'commands': commands
     }
     yamlBlock=template.substitute(values)
+    logging.debug("Freestyle block:\n%s",yamlBlock)
     return yaml.safe_load(yamlBlock)
 
 def createTaskBlock(name, previous):
@@ -65,9 +66,7 @@ class Csdp:
         #
         # Add EventBlock to EventSource:
         (owner,repoName) = trig.repo.split('/')
-        self.logger.debug("Convert Trigger %s", self.name)
-        self.logger.debug("  owner %s", owner)
-        self.logger.debug("  repo name %s", repoName)
+        self.logger.info("Convert Trigger %s", self.name)
 
         yaml_filename = "./manifests/eventBlock.template.yaml"
         with open(yaml_filename, mode='r') as file:
@@ -84,8 +83,6 @@ class Csdp:
             'ingressUrl': self.ingressUrl
         }
         eventYaml=template.substitute(values)
-        self.logger.debug("Event block:\n %s", eventYaml)
-        self.logger.debug("event source : %s", self.eventSource.manifest)
         self.eventSource.manifest['spec'][trig.provider]=yaml.safe_load(eventYaml)
 
         block = {
