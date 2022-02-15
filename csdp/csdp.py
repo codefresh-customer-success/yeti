@@ -8,10 +8,10 @@ import yaml
 
 from string import Template
 
-from .eventsource import EventSource
-from .sensor import Sensor
+from .eventsource       import EventSource
+from .sensor            import Sensor
+from .ingress           import Ingress
 from .workflow_template import WorkflowTemplate
-#from ..classic import Trigger
 
 ### GLOBALS ###
 
@@ -39,48 +39,66 @@ def createTaskBlock(name, previous):
 ### CLASSES ###
 class Csdp:
     """Class related to Codefresh Classic operations and data"""
-    def __init__(self, v1 = None):
+    def __init__(self, v1, ingressUrl):
         self.logger = logging.getLogger(type(self).__name__)
         self.uuid=str(uuid.uuid1())
+        self.ingressUrl=ingressUrl
         self.project = v1.project
         self.name = v1.name
-        self.eventSource = EventSource(name=v1.name, provider="github", uuid=self.uuid)
+        self.eventSource = EventSource(name=v1.name, project=v1.project,
+            provider="github", uuid=self.uuid)
         self.sensor = Sensor(v1.name, "github", self.uuid)
         self.workflowTemplate = WorkflowTemplate(v1.name)
+        self.ingress = Ingress(v1.project)
 
     def save(self):
         os.makedirs(self.project, exist_ok=True)
         self.eventSource.save(self.project, self.name)
         self.sensor.save(self.project, self.name)
         self.workflowTemplate.save(self.project, self.name)
+        self.ingress.save(self.project)
 
     def convertTrigger(self, trig):
         #
-        # Add to EventSource:
-
-        # spec
-        #   github:
-        #     github-d8a7c62d-2f2a-40c0-a0d4-139c957fd762:
-        #       events:
-        #         - push
-        #       repositories:
-        #         - owner: lrochette
-        #           names:
-        #             - express-microservice
-
+        # Add EventBlock to EventSource:
         (owner,repoName) = trig.repo.split('/')
         self.logger.debug("Convert Trigger %s", self.name)
         self.logger.debug("  owner %s", owner)
         self.logger.debug("  repo name %s", repoName)
-        block = {
-            "events": trig.events ,
-            "repositories": [{
-                "owner": owner,
-                "names": [repoName]
-            }]
-        }
-        self.eventSource.manifest['spec'][trig.provider][trig.provider + "-" + self.uuid]=block
 
+        yaml_filename = "./manifests/eventBlock.template.yaml"
+        with open(yaml_filename, mode='r') as file:
+            contents = file.read()
+            template = Template(contents)
+        values = {
+            'event': trig.events,
+            'owner': owner,
+            'repoName': repoName,
+            'shortName': self.name,
+            'project': self.project,
+            'provider': trig.provider,
+            'uuid': self.uuid,
+            'ingressUrl': self.ingressUrl
+        }
+        eventYaml=template.substitute(values)
+        self.logger.debug("Event block:\n %s", eventYaml)
+        self.logger.debug("event source : %s", self.eventSource.manifest)
+        self.eventSource.manifest['spec'][trig.provider]=yaml.safe_load(eventYaml)
+
+        block = {
+            "path": f"/webhooks/{self.project}/${self.name}/{trig.provider}-{self.uuid}",
+            "backend": {
+                "service": {
+                    "name": f"{self.name}-eventsource-svc",
+                    "port": {
+                        "number": 80
+                    }
+                }
+            },
+            "pathType": "ImplementationSpecific"
+        }
+        self.logger.debug("Before inserting ingress block: %s", self.ingress.manifest['spec']['rules'][0])
+        self.ingress.manifest['spec']['rules'][0]['http']['paths'].append(block)
     #
     # Step is converted into:
     #  - a template in the workflow template
@@ -115,6 +133,20 @@ class Csdp:
         self._sensor=value
 
     @property
+    def ingress(self):
+        return self._ingress
+
+    @ingress.setter
+    def ingress(self, value):
+        self.logger.debug("Ingress setter value: %s", value)
+        self.logger.debug("Ingress setter manifest: %s", value.manifest)
+        self.logger.debug("Ingress setter kind: %s", value.manifest['kind'])
+        if not value.manifest['kind'] == "Ingress":
+            self.logger.error("This is not a ingress")
+            raise TypeError
+        self._ingress=value
+
+    @property
     def eventSource(self):
         return self._eventSource
 
@@ -124,6 +156,17 @@ class Csdp:
             self.logger.error("This is not an event source")
             raise TypeError
         self._eventSource=value
+
+    @property
+    def ingressUrl(self):
+        return self._ingressUrl
+    @ingressUrl.setter
+    def ingressUrl(self, value):
+        if not isinstance(value, str):
+            raise TypeError
+        if not value.startswith("https://"):
+            self.logger.warn("Ingress url shold start with https://")
+        self._ingressUrl = value
 
     @property
     def project(self):

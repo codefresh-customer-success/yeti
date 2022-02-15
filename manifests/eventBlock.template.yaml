@@ -1,0 +1,20 @@
+
+github-${uuid}:
+  events:
+    - ${event}
+  repositories:
+    - owner: ${owner}
+      names:
+        - ${repoName}
+  webhook:
+    port: '80'
+    method: POST
+    endpoint: /webhooks/${project}/${shortName}/${provider}-${uuid}
+    url: ${ingressUrl}
+  active: true
+  insecure: false
+  contentType: json
+  deleteHookOnFinish: true
+  apiToken:
+    name: autopilot-secret
+    key: git_token

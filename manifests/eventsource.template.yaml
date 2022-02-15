@@ -10,14 +10,3 @@ spec:
   template:
     serviceAccountName: argo-server
   ${provider}:
-      webhook:
-        port: '80'
-        method: POST
-        endpoint: /webhooks/demo/${provider}-${uuid}
-      active: true
-      insecure: false
-      contentType: json
-      deleteHookOnFinish: true
-      apiToken:
-        name: autopilot-secret
-        key: git_token

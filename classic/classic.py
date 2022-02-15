@@ -3,11 +3,13 @@
 ### IMPORTS ###
 import yaml
 import logging
+import utils
 
 from .exceptions import ManifestMissingValueException
 from .exceptions import InvalidYamlAsPipeline
 from .exceptions import ParallelModeNotSupported
 from .step import Step
+#from ..utils import safeName
 
 ### GLOBALS ###
 
@@ -36,8 +38,8 @@ class Classic:
         self.logger.debug(pipeYaml)
 
         self._yaml = pipeYaml
-        self._project=pipeYaml['metadata']['project']
-        self._shortName=pipeYaml['metadata']['shortName']
+        self._project=utils.safeName(pipeYaml['metadata']['project'])
+        self._shortName=utils.safeName(pipeYaml['metadata']['shortName'])
         self._fullName=pipeYaml['metadata']['name']
         # spec info
         self._triggers=pipeYaml['spec']['triggers']

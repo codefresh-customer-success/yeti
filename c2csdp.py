@@ -14,6 +14,8 @@ def parse_arguments():
     parser.add_argument('--log-level', default='info',
         choices=['info', 'debug', 'warning', 'error', 'critical'],
         help='set the log level')
+    parser.add_argument('--ingress-host', required=True,
+        help='Ingress URL - Required')
     args = parser.parse_args()
     return args
 #
@@ -26,7 +28,7 @@ def main():
     logging.basicConfig(format = log_format, level = args.log_level.upper())
 
     v1=classic.Classic(args.filename)
-    v2=csdp.Csdp(v1)
+    v2=csdp.Csdp(v1, args.ingress_host)
     for obj in v1.triggers:
         trig = classic.Trigger(obj)
         logging.info("Processing Trigger %s", trig.name)

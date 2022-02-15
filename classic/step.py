@@ -22,16 +22,16 @@ class Step:
         self.logger.debug("Step Block : %s", block)
 
         self.name = name
+        self._type="freestyle"
         if 'type' in block:
             self.type = block['type']
-        else:
-            self._type="freestyle"
+
         self.image = block['image']
         self.commands = block['commands']
+        self._cwd='/codefresh/volume'
         if 'working_directory' in block:
             self.cwd = block['working_directory']
-        else:
-            self.cwd='/codefresh/volume'
+
     #
     # Setters and getters
     #
@@ -50,7 +50,7 @@ class Step:
     def type(self):
         return self._type
     @type.setter
-    def type(self, value='freestyle'):
+    def type(self, value):
         if not isinstance(value, str):
             raise TypeError
         if not value == "freestyle":
@@ -77,7 +77,7 @@ class Step:
     def cwd(self):
         return self._cwd
     @cwd.setter
-    def cwd(self, value = '/codefresh/volume'):
+    def cwd(self, value):
         if '$' in value:
             raise VariableNotSupportedInField("working_directory")
         self._cwd = value

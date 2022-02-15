@@ -27,3 +27,7 @@ class EmptyObjectException(Exception):
     pass
 class VariableNotSupportedInField(Exception):
     pass
+class InvalidYamlAsIngress(Exception):
+    pass
+class OnlyOneEventSupportbyTrigger(Exception):
+    pass

@@ -12,7 +12,7 @@ from string import Template
 
 ### CLASSES ###
 class EventSource:
-    def __init__(self, name, provider, uuid):
+    def __init__(self, name, project, provider, uuid):
         self.logger = logging.getLogger(type(self).__name__)
         yaml_filename = "./manifests/eventsource.template.yaml"
 
@@ -23,6 +23,7 @@ class EventSource:
         self.logger.debug("Init EventSource - uuid: %s", uuid)
         values = {
             'shortName': name,
+            'project': project,
             'provider': provider,
             'uuid': uuid
         }

@@ -8,6 +8,8 @@
 import logging
 
 from .exceptions import OnlySupportGitTriggerException
+from .exceptions import OnlyOneEventSupportbyTrigger
+
 ### GLOBALS ###
 
 ### FUNCTIONS ###
@@ -85,7 +87,13 @@ class Trigger:
         return self._events
     @events.setter
     def events(self, value):
-        self._events = value
+        self.logger.debug("Trigger setter for event: %s", value)
+        if len(value) > 1:
+            raise OnlyOneEventSupportbyTrigger
+        event=value[0]
+        if event.startswith("push"):
+            event="push"
+        self._events = event
 
     @property
     def provider(self):

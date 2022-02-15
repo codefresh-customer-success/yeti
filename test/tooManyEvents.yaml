@@ -21,6 +21,7 @@ spec:
       repo: lrochette/yeti-test
       events:
         - push.heads
+        - anotherEvent
       pullRequestAllowForkEvents: false
       commentRegex: /.*/gi
       branchRegex: /.*/gi

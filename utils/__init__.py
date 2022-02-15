@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 
 ### IMPORTS ###
-import str
+import string
 
 ### GLOBALS ###
 
 ### FUNCTIONS ###
-def safeName (string name):
-   return name.replace('/','_')
+def safeName (name):
+   return name.replace('/','_').lower()
 
 ### CLASSES ###
