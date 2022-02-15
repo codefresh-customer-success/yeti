@@ -46,5 +46,8 @@ spec:
                   value: ''
               workflowTemplateRef:
                 name: yeti1-pipeline-template
+              volumeClaimTemplates:
+                - metadata:
+                    name: codefresh-volume
       conditions: github-5b46a1be-8e7c-11ec-86a4-acde48001122
       name: pipeline
