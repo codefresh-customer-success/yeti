@@ -28,11 +28,11 @@ spec:
                 generateName: ${shortName}-pipeline-
               spec:
                 arguments:
-                  parameters:
+                  parameters: []
                     # insert parameters here
                 workflowTemplateRef:
                   name: ${shortName}-pipeline-template
-          parameters:
+          parameters: []
             #
             # Add match between payload and parameters
             #

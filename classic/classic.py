@@ -9,6 +9,8 @@ from .exceptions import ManifestMissingValueException
 from .exceptions import InvalidYamlAsPipeline
 from .exceptions import ParallelModeNotSupported
 from .step import Step
+from .variable import Variable
+
 #from ..utils import safeName
 
 ### GLOBALS ###
@@ -47,6 +49,12 @@ class Classic:
         for s in pipeYaml['spec']['steps']:
             self.addStep(s, pipeYaml['spec']['steps'][s])
 
+        # variables
+        self._variables=[]
+        self.addVariable(Variable("CF_REPO_OWNER", "", "system", 0, "{{.Input.body.repository.owner.name}}"))
+        self.addVariable(Variable("CF_REPO_NAME", "", "system", 1, "{{.Input.body.repository.name}}"))
+        self.addVariable(Variable("CF_BRANCH", "", "system", 2, "{{.Input.body.ref}}"))
+
         # No parallel mode for now
         if "mode" in pipeYaml['spec']:
             self._mode=pipeYaml['spec']['mode']
@@ -56,15 +64,19 @@ class Classic:
             self.logger.critical("Parallel mode not supported")
             raise ParallelModeNotSupported(self._fullName)
 
+
     def addStep(self, name, block):
         self._steps.append(Step(name, block))
+
+    def addVariable(self, var):
+        self._variables.append(var)
 
     def print(self):
         print(f"v1.project:{self._project}")
         print(f"v1.name:{self._shortName}")
         #print(f"v1.yaml:{self._yaml}")
     @property
-    def mani(self):
+    def manifest(self):
         return self._yaml
 
     @property
@@ -86,3 +98,7 @@ class Classic:
     @property
     def steps(self):
         return self._steps
+
+    @property
+    def variables(self):
+        return self._variables

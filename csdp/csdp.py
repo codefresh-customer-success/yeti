@@ -109,6 +109,24 @@ class Csdp:
             self.workflowTemplate.manifest['spec']['templates'].append(templateBlock)
             taskBlock=createTaskBlock(step.name, previousStep)
             self.workflowTemplate.manifest['spec']['templates'][0]['dag']['tasks'].append(taskBlock)
+
+    #
+    # Variable is added to the sensor (input to argoWorkflow)
+    # parameters (match payload to input param)
+    def convertVariable(self, var, provider, uuid):
+        self.sensor.manifest['spec']['triggers'][0]['template']['argoWorkflow']['source']['resource']['spec']['arguments']['parameters'].append(
+            {"name": var.name, "value": var.value}
+        )
+        self.sensor.manifest['spec']['triggers'][0]['template']['argoWorkflow']['parameters'].append(
+            {
+                "dest": f"spec.arguments.parameters.{var.order}.value",
+                "src": {
+                     "dependencyName": f"{provider}-{uuid}",
+                     "dataTemplate": var.path
+                }
+            }
+        )
+
 ### Setters and getters
     @property
     def workflowTemplate(self):
