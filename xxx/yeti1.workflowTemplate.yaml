@@ -17,16 +17,16 @@ spec:
       - name: CF_REPO_NAME
       - name: CF_BRANCH
     name: pipeline
-  - name: test
-    script:
-      command:
-      - sh
-      image: ubuntu:latest
-      source:
+  - container:
+      args:
       - echo bar
       - ls
       - echo foo
+      command:
+      - sh
+      image: ubuntu:latest
       volumeMounts:
       - mountPath: /codefresh/volume
         name: codefresh-volume
       workingDir: /codefresh/volume
+    name: test
