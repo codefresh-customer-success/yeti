@@ -21,9 +21,8 @@ spec:
     script:
       command: bash
       image: ubuntu:latest
-      source: '[''ls'']
-
-        '
+      source: |
+        ls -ail
       volumeMounts:
       - mountPath: /codefresh/volume
         name: codefresh-volume
