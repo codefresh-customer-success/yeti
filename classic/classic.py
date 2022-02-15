@@ -56,10 +56,10 @@ class Classic:
         self.addVariable(Variable("CF_BRANCH", "", "system", 2, "{{.Input.body.ref}}"))
 
         # No parallel mode for now
+        self._mode="serial"
         if "mode" in pipeYaml['spec']:
             self._mode=pipeYaml['spec']['mode']
-        else:
-            self._mode="serial"
+
         if self._mode == "parallel":
             self.logger.critical("Parallel mode not supported")
             raise ParallelModeNotSupported(self._fullName)
@@ -90,7 +90,9 @@ class Classic:
     @property
     def fullName(self):
         return self._fullName
-
+    @property
+    def mode(self):
+        return self._mode
     @property
     def triggers(self):
         return self._triggers

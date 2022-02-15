@@ -11,11 +11,8 @@ spec:
   entrypoint: pipeline
   templates:
     - name: pipeline
-      # inputs:
-      #   parameters:
-        #
-        # define parameters
-        #
+      inputs:
+        parameters: []
       dag:
         tasks: []
           #

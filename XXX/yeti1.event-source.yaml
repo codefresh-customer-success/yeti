@@ -5,7 +5,7 @@ metadata:
 spec:
   eventBusName: codefresh-eventbus
   github:
-    github-b2bc7550-8dfe-11ec-a1fb-acde48001122:
+    github-f1943858-8e03-11ec-bcdd-acde48001122:
       active: true
       apiToken:
         key: git_token
@@ -20,7 +20,7 @@ spec:
         - yeti-test
         owner: lrochette
       webhook:
-        endpoint: /webhooks/xxx/yeti1/github-b2bc7550-8dfe-11ec-a1fb-acde48001122
+        endpoint: /webhooks/xxx/yeti1/github-f1943858-8e03-11ec-bcdd-acde48001122
         method: POST
         port: '80'
         url: https://lrcsdp.support.cf-cd.com

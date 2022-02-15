@@ -117,6 +117,9 @@ class Csdp:
         self.sensor.manifest['spec']['triggers'][0]['template']['argoWorkflow']['source']['resource']['spec']['arguments']['parameters'].append(
             {"name": var.name, "value": var.value}
         )
+        self.workflowTemplate.manifest['spec']['templates'][0]['inputs']['parameters'].append(
+            {"name": var.name}
+        )
         self.sensor.manifest['spec']['triggers'][0]['template']['argoWorkflow']['parameters'].append(
             {
                 "dest": f"spec.arguments.parameters.{var.order}.value",

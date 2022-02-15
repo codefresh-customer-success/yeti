@@ -11,6 +11,11 @@ spec:
       tasks:
       - name: test
         template: test
+    inputs:
+      parameters:
+      - name: CF_REPO_OWNER
+      - name: CF_REPO_NAME
+      - name: CF_BRANCH
     name: pipeline
   - name: test
     script:

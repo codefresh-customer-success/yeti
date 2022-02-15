@@ -20,10 +20,12 @@ class Ingress:
         # If ingress file exist, load it
         #
         filename=f"{project}/{project}.ingress.yaml"
+        self.logger.debug ("Checking if ingress file already present: %s", filename)
         if os.path.isfile(filename):
+            self.logger.info("Updating existing Ingress")
             with open(filename, mode='r') as file:
                 try:
-                    ingressYaml = yaml.safe_load(file)
+                    self._manifest = yaml.safe_load(file)
                 except yaml.YAMLError as exc:
                     self.logger.error(exc)
                     raise InvalidYamlAsIngress(filename)
@@ -41,8 +43,7 @@ class Ingress:
                     'project': project
                 }
                 ingressYaml=template.substitute(values)
-
-        self._manifest = yaml.safe_load(ingressYaml)
+                self._manifest = yaml.safe_load(ingressYaml)        
         self.logger.debug("Ingress code: %s", self._manifest)
 
     @property
@@ -53,4 +54,6 @@ class Ingress:
         ingressFilename=f"{project}/{project}.ingress.yaml"
         ingressFile = open(ingressFilename, "w")
         yaml.dump(self.manifest, ingressFile)
+#        ingressFile.write("\n")
+        ingressFile.close()
         self.logger.info("Create Ingress: %s", ingressFilename)
