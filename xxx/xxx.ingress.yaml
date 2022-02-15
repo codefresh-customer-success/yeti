@@ -12,5 +12,5 @@ spec:
             name: yeti1-eventsource-svc
             port:
               number: 80
-        path: /webhooks/xxx/$yeti1/github-5b46a1be-8e7c-11ec-86a4-acde48001122
+        path: /webhooks/xxx/yeti1/github-5b46a1be-8e7c-11ec-86a4-acde48001122
         pathType: ImplementationSpecific
