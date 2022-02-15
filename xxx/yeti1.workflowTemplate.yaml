@@ -24,6 +24,7 @@ spec:
       - echo foo
       command:
       - sh
+      - -c
       image: ubuntu:latest
       volumeMounts:
       - mountPath: /codefresh/volume
