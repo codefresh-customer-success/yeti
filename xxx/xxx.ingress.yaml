@@ -49,3 +49,24 @@ spec:
               number: 80
         path: /webhooks/xxx/yeti2/github-3e10d100-8ef4-11ec-b96e-acde48001122
         pathType: ImplementationSpecific
+      - backend:
+          service:
+            name: yeti2-eventsource-svc
+            port:
+              number: 80
+        path: /webhooks/xxx/yeti2/github-147efc70-8f55-11ec-bd38-acde48001122
+        pathType: ImplementationSpecific
+      - backend:
+          service:
+            name: yeti2-eventsource-svc
+            port:
+              number: 80
+        path: /webhooks/xxx/yeti2/github-664bea90-8f55-11ec-87c3-acde48001122
+        pathType: ImplementationSpecific
+      - backend:
+          service:
+            name: yeti2-eventsource-svc
+            port:
+              number: 80
+        path: /webhooks/xxx/yeti2/github-ade358f2-8f55-11ec-971d-acde48001122
+        pathType: ImplementationSpecific

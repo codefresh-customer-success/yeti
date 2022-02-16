@@ -9,7 +9,7 @@ import re
 from .exceptions import ManifestMissingValueException
 from .exceptions import InvalidYamlAsPipeline
 from .exceptions import ParallelModeNotSupported
-from .freestyle  import Freestyle
+#from .freestyle  import Freestyle
 from .plugins    import Plugins
 from .plugins    import Parameter
 
@@ -32,7 +32,18 @@ def parseRepo(str):
         (owner, repo)=str.split('/')
     return (owner, repo)
 
+def replaceParameterVariableByStepOutput(value, output):
+    if '$' in value:
+        # replace value of variable in working by output of named step
+        regexp = r"\$\{{1,2}([^}]+)\}{1,2}"
 
+        #
+        # TODO:
+        #  - add check to confirm this macthes a step name
+        subst="{{ tasks.\\1.outputs.parameters.%s }}" %(output)
+        # logging.debug("replaceParameterVariableByStepOutput - subst: %s", subst)
+        value=re.sub(regexp, subst,value,0)
+    return value
 
 ### CLASSES ###
 class Classic:
@@ -99,7 +110,18 @@ class Classic:
             commands=block['commands']
 
         if type == 'freestyle':
-            return Freestyle(name, shell, block['image'], cwd, commands)
+            image=replaceParameterVariableByStepOutput(block['image'], "IMAGE")
+            #self.logger.debug("Freestyle step cwd: %s", cwd)
+            cwd=replaceParameterVariableByStepOutput(cwd, "WORKING_DIR")
+            #self.logger.debug("Freestyle step cwd after: %s", cwd)
+
+            return Plugins(name, "freestyle", "0.0.1",
+                [
+                    Parameter('image',       self.replaceVariable(image)),
+                    Parameter("working_dir", self.replaceVariable(cwd)),
+                    Parameter("shell",       self.replaceVariable(shell)),
+                    Parameter("commands",    commands)
+                ])
         elif type == 'git-clone':
             (repoOwner, repoName) = parseRepo(block['repo'])
 
@@ -113,6 +135,8 @@ class Classic:
             raise StepTypeNotSupported(type)
 
     def replaceVariable(self, parameter):
+        if not parameter:
+            return parameter
         if not '$' in parameter:
             return parameter
         regexp = r"\$\{{1,2}([^}]+)\}{1,2}"
