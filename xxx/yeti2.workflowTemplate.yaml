@@ -30,8 +30,8 @@ spec:
           - name: shell
             value: sh
           - name: commands
-            value:
-            - ls
+            value: |
+              ls
         depends: clone
         name: test
         templateRef:
