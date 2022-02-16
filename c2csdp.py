@@ -32,16 +32,19 @@ def main():
     v1=classic.Classic(args.filename)
     v2=csdp.Csdp(v1, args.ingress_host, args.volume_size)
 
+    logging.info("Processing triggers")
     for obj in v1.triggers:
         trig = classic.Trigger(obj)
         logging.info("Processing Trigger %s", trig.name)
         v2.convertTrigger(trig)
 
+    logging.info("Processing steps")
     previous = None
     for step in v1.steps:
         v2.convertStep(step, previous)
         previous = step.name
 
+    logging.info("Processing variables")
     for var in v1.variables:
         v2.convertVariable(var, "github", v2.uuid)
 

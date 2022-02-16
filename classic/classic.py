@@ -4,11 +4,17 @@
 import yaml
 import logging
 import utils
+import re
 
 from .exceptions import ManifestMissingValueException
 from .exceptions import InvalidYamlAsPipeline
 from .exceptions import ParallelModeNotSupported
-from .step import Step
+from .freestyle  import Freestyle
+from .plugins    import Plugins
+from .plugins    import Parameter
+
+from .step       import Step
+
 from .variable import Variable
 
 #from ..utils import safeName
@@ -16,6 +22,17 @@ from .variable import Variable
 ### GLOBALS ###
 
 ### FUNCTIONS ###
+def parseRepo(str):
+    if str.startswith("http"):
+        list=str.split('/')
+        repo=list[len(list)-1]
+        repo=repo.replace(".git", "")
+        owner=list[len(lits)-2]
+    else:
+        (owner, repo)=str.split('/')
+    return (owner, repo)
+
+
 
 ### CLASSES ###
 class Classic:
@@ -41,17 +58,19 @@ class Classic:
         self._project=utils.safeName(pipeYaml['metadata']['project'])
         self._shortName=utils.safeName(pipeYaml['metadata']['shortName'])
         self._fullName=pipeYaml['metadata']['name']
-        # spec info
-        self._triggers=pipeYaml['spec']['triggers']
-        self._steps=[]
-        for s in pipeYaml['spec']['steps']:
-            self.addStep(s, pipeYaml['spec']['steps'][s])
 
         # variables
         self._variables=[]
         self.addVariable(Variable("CF_REPO_OWNER", "", "system", 0, "{{.Input.body.repository.owner.name}}"))
         self.addVariable(Variable("CF_REPO_NAME", "", "system", 1, "{{.Input.body.repository.name}}"))
         self.addVariable(Variable("CF_BRANCH", "", "system", 2, "{{.Input.body.ref}}"))
+
+        # spec info
+        self._triggers=pipeYaml['spec']['triggers']
+        self._steps=[]
+        for s in pipeYaml['spec']['steps']:
+            self.addStep(s, pipeYaml['spec']['steps'][s])
+
 
         # No parallel mode for now
         self._mode="serial"
@@ -62,9 +81,49 @@ class Classic:
             self.logger.critical("Parallel mode not supported")
             raise ParallelModeNotSupported(self._fullName)
 
+    def createStep(self, name, block):
+        type="freestyle"
+        if 'type' in block:
+            type = block['type']
+
+        shell="sh"
+        if 'shell' in block:
+            shell = block['shell']
+
+        cwd="/codefresh/volume"
+        if 'working_directory' in block:
+            cwd = block['working_directory']
+
+        commands=""
+        if 'commands' in block:
+            commands=block['commands']
+
+        if type == 'freestyle':
+            return Freestyle(name, shell, block['image'], cwd, commands)
+        elif type == 'git-clone':
+            (repoOwner, repoName) = parseRepo(block['repo'])
+
+            return Plugins(name, "git-clone", "0.0.1",
+                [
+                    Parameter('CF_REPO_OWER', self.replaceVariable(repoOwner)),
+                    Parameter("CF_REPO_NAME", self.replaceVariable(repoName)),
+                    Parameter("CF_BRANCH",    self.replaceVariable(block['revision']))
+                ])
+        else:
+            raise StepTypeNotSupported(type)
+
+    def replaceVariable(self, parameter):
+        if not '$' in parameter:
+            return parameter
+        regexp = r"\$\{{1,2}([^}]+)\}{1,2}"
+        subst="\\1"
+        for v in self.variables:
+            strippedParameter=re.sub(regexp, subst,parameter,0)
+            if strippedParameter == v.name:
+                return "{{ inputs.parameters.%s }}" % (strippedParameter)
 
     def addStep(self, name, block):
-        self._steps.append(Step(name, block))
+        self._steps.append(self.createStep(name, block))
 
     def addVariable(self, var):
         self._variables.append(var)

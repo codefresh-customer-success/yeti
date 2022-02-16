@@ -5,6 +5,7 @@ import logging
 import uuid
 import os
 import yaml
+import sys
 
 from string import Template
 
@@ -13,11 +14,14 @@ from .sensor            import Sensor
 from .ingress           import Ingress
 from .workflow_template import WorkflowTemplate
 
+sys.path.append("..")
+
+from classic          import StepTypeNotSupported
+
 ### GLOBALS ###
 
 ### FUNCTIONS ###
 def createFreestyleBlock(name, image, dir, shell, commands):
-    logging.debug("createFreestyleBlock - dir: %s", dir)
     yaml_filename = "./manifests/freestyle.template.yaml"
     with open(yaml_filename, mode='r') as file:
         contents = file.read()
@@ -30,8 +34,30 @@ def createFreestyleBlock(name, image, dir, shell, commands):
         'commands': commands
     }
     yamlBlock=template.substitute(values)
-    logging.debug("Freestyle block:\n%s",yamlBlock)
+    #logging.debug("Freestyle Block:\n%s", yamlBlock)
     return yaml.safe_load(yamlBlock)
+
+def createPluginTaskBlock(plugin, previous):
+    block = {
+        "name": plugin.name,
+        "templateRef": {
+            "name": f"c2csdp.{plugin.pluginName}.{plugin.pluginVersion}",
+            "template": plugin.pluginName
+        },
+        "arguments": {
+            "parameters": []
+        }
+    }
+    for x in plugin.parameters:
+        block['arguments']['parameters'].append(
+            {
+             "name": x.name,
+             "value": x.value
+            }
+        )
+    if previous:
+        block['depends']=previous
+    return block
 
 def createTaskBlock(name, previous):
     block = { "name": name, "template": name}
@@ -97,20 +123,24 @@ class Csdp:
             },
             "pathType": "ImplementationSpecific"
         }
-        self.logger.debug("Before inserting ingress block: %s", self.ingress.manifest['spec']['rules'][0])
         self.ingress.manifest['spec']['rules'][0]['http']['paths'].append(block)
     #
     # Step is converted into:
     #  - a template in the workflow template
     #  - a call in the "pipeline" workflow
     def convertStep(self, step, previousStep = None):
+        self.logger.info("Converting step %s (%s)", step.name, step.type)
         if step.type == "freestyle":
             templateBlock=createFreestyleBlock(name=step.name, image=step.image,
                 dir=step.cwd, shell=step.shell, commands=step.commands)
             self.workflowTemplate.manifest['spec']['templates'].append(templateBlock)
             taskBlock=createTaskBlock(step.name, previousStep)
             self.workflowTemplate.manifest['spec']['templates'][0]['dag']['tasks'].append(taskBlock)
-
+        elif step.type == "plugins":
+            templateBlock=createPluginTaskBlock(step, previousStep)
+            self.workflowTemplate.manifest['spec']['templates'].append(templateBlock)
+        else:
+            raise StepTypeNotSupported(step.type)
     #
     # Variable is added to the sensor (input to argoWorkflow)
     # parameters (match payload to input param)

@@ -1,0 +1,90 @@
+version: '1.0'
+kind: pipeline
+metadata:
+  name: xxx/yeti2
+  project: xxx
+  projectId: 61f2ef65d6609f72bf9bb91d
+  revision: 4
+  accountId: 600edc0bdffeb2bc4981d15a
+  created_at: '2022-02-12T00:58:58.633Z'
+  updated_at: '2022-02-15T23:18:02.476Z'
+  shortName: yeti2
+  deprecate: {}
+  originalYamlString: |+
+    # More examples of Codefresh YAML can be found at
+    # https://codefresh.io/docs/docs/yaml-examples/examples/
+
+    version: "1.0"
+    # Stages can help you organize your steps in stages
+    stages:
+      - "clone"
+      - "build"
+      - "test"
+
+    steps:
+      clone:
+        title: "Cloning repository"
+        type: "git-clone"
+        repo: ${CF_REPO_OWNER}/${CF_REPO_NAME}
+        # Clone the master branch. Or, use ${{CF_BRANCH}} to get branch name from trigger
+        # Learn more at https://codefresh.io/docs/docs/codefresh-yaml/variables/
+        revision: "main"
+        stage: "clone"
+
+
+      test:
+        title: "Running test"
+        type: "freestyle" # Run any command
+        image: "ubuntu:latest" # The image in which command will be executed
+        working_directory: "${{clone}}" # Running command where code cloned
+        commands:
+          - "ls"
+        stage: "test"
+
+  id: 620706528593f7ba534db408
+spec:
+  triggers:
+    - name: push
+      type: git
+      repo: lrochette/yeti-test
+      events:
+        - push.heads
+      pullRequestAllowForkEvents: false
+      commentRegex: /.*/gi
+      branchRegex: /.*/gi
+      branchRegexInput: regex
+      provider: github
+      disabled: false
+      options:
+        noCache: false
+        noCfCache: false
+        resetVolume: false
+      verified: true
+      context: github
+      contexts: []
+      variables: []
+      status: verified
+      id: 620c34a60781e067415b670f
+      endpoint: 'https://g.codefresh.io/api/providers/github/hook/FlcpaNIee6'
+      secret: PdN5Zw4hAnm9KPHT
+  stages:
+    - clone
+    - build
+    - test
+  variables: []
+  contexts: []
+  steps:
+    clone:
+      title: Cloning repository
+      type: git-clone
+      repo: '${CF_REPO_OWNER}/${CF_REPO_NAME}'
+      revision: main
+      stage: clone
+    test:
+      title: Running test
+      type: freestyle
+      image: 'ubuntu:latest'
+      working_directory: '${{clone}}'
+      commands:
+        - ls
+      stage: test

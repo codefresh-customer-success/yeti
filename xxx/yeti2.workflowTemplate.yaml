@@ -21,9 +21,9 @@ spec:
   - arguments:
       parameters:
       - name: CF_REPO_OWER
-        value: ${CF_REPO_OWNER}
+        value: '{{ inputs.parameters.CF_REPO_OWNER }}'
       - name: CF_REPO_NAME
-        value: ${CF_REPO_NAME}
+        value: '{{ inputs.parameters.CF_REPO_NAME }}'
       - name: CF_BRANCH
         value: main
     name: clone

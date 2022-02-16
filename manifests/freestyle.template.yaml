@@ -1,7 +1,7 @@
   name: ${name}
   script:
     image: ${image}
-    workingDir: ${dir}
+    workingDir: '${dir}'
     command: [${shell}]
     source : |
 ${commands}

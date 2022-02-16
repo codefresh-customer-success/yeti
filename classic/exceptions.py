@@ -13,6 +13,9 @@ class ManifestEmptyException(Exception):
     pass
 class InvalidYamlAsPipeline(Exception):
     pass
+class InvalidYamlAsIngress(Exception):
+    pass
+    
 class OnlySupportGitTriggerException(Exception):
     pass
 class OnlySupportGithubProvider(Exception):
@@ -27,8 +30,7 @@ class EmptyObjectException(Exception):
     pass
 class VariableNotSupportedInField(Exception):
     pass
-class InvalidYamlAsIngress(Exception):
-    pass
+
 class OnlyOneEventSupportbyTrigger(Exception):
     pass
 class ShellTypeNotSupported(Exception):
