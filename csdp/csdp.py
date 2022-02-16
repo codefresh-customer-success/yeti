@@ -21,21 +21,21 @@ from classic          import StepTypeNotSupported
 ### GLOBALS ###
 
 ### FUNCTIONS ###
-def createFreestyleBlock(name, image, dir, shell, commands):
-    yaml_filename = "./manifests/freestyle.template.yaml"
-    with open(yaml_filename, mode='r') as file:
-        contents = file.read()
-        template = Template(contents)
-    values = {
-        'shell': shell,
-        'name': name,
-        'image': image,
-        'dir': dir,
-        'commands': commands
-    }
-    yamlBlock=template.substitute(values)
-    #logging.debug("Freestyle Block:\n%s", yamlBlock)
-    return yaml.safe_load(yamlBlock)
+# def createFreestyleBlock(name, image, dir, shell, commands):
+#     yaml_filename = "./manifests/freestyle.template.yaml"
+#     with open(yaml_filename, mode='r') as file:
+#         contents = file.read()
+#         template = Template(contents)
+#     values = {
+#         'shell': shell,
+#         'name': name,
+#         'image': image,
+#         'dir': dir,
+#         'commands': commands
+#     }
+#     yamlBlock=template.substitute(values)
+#     #logging.debug("Freestyle Block:\n%s", yamlBlock)
+#     return yaml.safe_load(yamlBlock)
 
 def createPluginTaskBlock(plugin, previous):
     block = {
@@ -59,11 +59,11 @@ def createPluginTaskBlock(plugin, previous):
         block['depends']=previous
     return block
 
-def createTaskBlock(name, previous):
-    block = { "name": name, "template": name}
-    if previous:
-        block['depends']=previous
-    return block
+# def createTaskBlock(name, previous):
+#     block = { "name": name, "template": name}
+#     if previous:
+#         block['depends']=previous
+#     return block
 
 ### CLASSES ###
 class Csdp:
@@ -130,13 +130,14 @@ class Csdp:
     #  - a call in the "pipeline" workflow
     def convertStep(self, step, previousStep = None):
         self.logger.info("Converting step %s (%s)", step.name, step.type)
-        if step.type == "freestyle":
-            templateBlock=createFreestyleBlock(name=step.name, image=step.image,
-                dir=step.cwd, shell=step.shell, commands=step.commands)
-            self.workflowTemplate.manifest['spec']['templates'].append(templateBlock)
-            taskBlock=createTaskBlock(step.name, previousStep)
-            self.workflowTemplate.manifest['spec']['templates'][0]['dag']['tasks'].append(taskBlock)
-        elif step.type == "plugins":
+        # if step.type == "freestyle":
+        #     templateBlock=createFreestyleBlock(name=step.name, image=step.image,
+        #         dir=step.cwd, shell=step.shell, commands=step.commands)
+        #     self.workflowTemplate.manifest['spec']['templates'].append(templateBlock)
+        #     taskBlock=createTaskBlock(step.name, previousStep)
+        #     self.workflowTemplate.manifest['spec']['templates'][0]['dag']['tasks'].append(taskBlock)
+        # el
+        if step.type == "plugins":
             templateBlock=createPluginTaskBlock(step, previousStep)
             self.workflowTemplate.manifest['spec']['templates'][0]['dag']['tasks'].append(templateBlock)
         else:

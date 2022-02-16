@@ -107,8 +107,12 @@ class Classic:
 
         commands=""
         if 'commands' in block:
-            commands=block['commands']
-
+            logging.debug("COMMAND: %s", block['commands'])
+            str=''
+            for line in block['commands']:
+                str += f"{line}\n"
+            str += "\n"
+            commands=str
         if type == 'freestyle':
             image=replaceParameterVariableByStepOutput(block['image'], "IMAGE")
             #self.logger.debug("Freestyle step cwd: %s", cwd)
@@ -118,7 +122,7 @@ class Classic:
             return Plugins(name, "freestyle", "0.0.1",
                 [
                     Parameter('image',       self.replaceVariable(image)),
-                    Parameter("working_dir", self.replaceVariable(cwd)),
+                    Parameter("working_directory", self.replaceVariable(cwd)),
                     Parameter("shell",       self.replaceVariable(shell)),
                     Parameter("commands",    commands)
                 ])

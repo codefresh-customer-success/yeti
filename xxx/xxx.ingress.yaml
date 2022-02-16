@@ -12,61 +12,12 @@ spec:
             name: yeti2-eventsource-svc
             port:
               number: 80
-        path: /webhooks/xxx/yeti2/github-2eb385fc-8eec-11ec-838a-acde48001122
+        path: /webhooks/xxx/yeti2/github-652977ec-8f5d-11ec-b116-acde48001122
         pathType: ImplementationSpecific
       - backend:
           service:
-            name: yeti2-eventsource-svc
+            name: yeti1-eventsource-svc
             port:
               number: 80
-        path: /webhooks/xxx/yeti2/github-2abcb306-8ef1-11ec-b779-acde48001122
-        pathType: ImplementationSpecific
-      - backend:
-          service:
-            name: yeti2-eventsource-svc
-            port:
-              number: 80
-        path: /webhooks/xxx/yeti2/github-6d7afee6-8ef1-11ec-a391-acde48001122
-        pathType: ImplementationSpecific
-      - backend:
-          service:
-            name: yeti2-eventsource-svc
-            port:
-              number: 80
-        path: /webhooks/xxx/yeti2/github-872cbff0-8ef1-11ec-a49d-acde48001122
-        pathType: ImplementationSpecific
-      - backend:
-          service:
-            name: yeti2-eventsource-svc
-            port:
-              number: 80
-        path: /webhooks/xxx/yeti2/github-06d8da18-8ef2-11ec-b1ec-acde48001122
-        pathType: ImplementationSpecific
-      - backend:
-          service:
-            name: yeti2-eventsource-svc
-            port:
-              number: 80
-        path: /webhooks/xxx/yeti2/github-3e10d100-8ef4-11ec-b96e-acde48001122
-        pathType: ImplementationSpecific
-      - backend:
-          service:
-            name: yeti2-eventsource-svc
-            port:
-              number: 80
-        path: /webhooks/xxx/yeti2/github-147efc70-8f55-11ec-bd38-acde48001122
-        pathType: ImplementationSpecific
-      - backend:
-          service:
-            name: yeti2-eventsource-svc
-            port:
-              number: 80
-        path: /webhooks/xxx/yeti2/github-664bea90-8f55-11ec-87c3-acde48001122
-        pathType: ImplementationSpecific
-      - backend:
-          service:
-            name: yeti2-eventsource-svc
-            port:
-              number: 80
-        path: /webhooks/xxx/yeti2/github-ade358f2-8f55-11ec-971d-acde48001122
+        path: /webhooks/xxx/yeti1/github-653ca66e-8f5d-11ec-850d-acde48001122
         pathType: ImplementationSpecific
