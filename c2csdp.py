@@ -48,6 +48,10 @@ def main():
     for var in v1.variables:
         v2.convertVariable(var, "github", v2.uuid)
 
+    logging.info("Processing secret volumes")
+    for vol in v1.secretVolumes:
+        v2.addSecretVolume(vol)
+
     v2.save()
 
 if __name__ == "__main__":

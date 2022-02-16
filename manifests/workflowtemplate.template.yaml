@@ -3,11 +3,9 @@ kind: WorkflowTemplate
 metadata:
   name: ${shortName}-pipeline-template
 spec:
+  volumes: []
   arguments:
-    parameters:
-      #
-      # define parameters
-      #
+    parameters: []
   entrypoint: pipeline
   templates:
     - name: pipeline

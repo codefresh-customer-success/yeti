@@ -162,6 +162,24 @@ class Csdp:
             }
         )
 
+    #
+    # Add secret volumes to workflow template
+    # Like in case of kaniko build for example
+    def addSecretVolume(self, volume):
+        self.workflowTemplate.manifest['spec']['volumes'].append(
+            {
+                "name": volume,
+                "secret": {
+                    "secretName": volume,
+                    "items": [
+                        {
+                            "key": ".dockerconfigjson",
+                            "path": "config.json"
+                        }
+                    ]
+                }
+            }
+        )
 ### Setters and getters
     @property
     def workflowTemplate(self):

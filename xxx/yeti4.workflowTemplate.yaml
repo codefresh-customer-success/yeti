@@ -4,7 +4,7 @@ metadata:
   name: yeti4-pipeline-template
 spec:
   arguments:
-    parameters: null
+    parameters: []
   entrypoint: pipeline
   templates:
   - dag:
@@ -31,6 +31,8 @@ spec:
             value: Dockerfile
           - name: working_directory
             value: '{{ tasks.clone.outputs.parameters.WORKING_DIR }}'
+          - name: docker-config
+            value: docker-lr
         depends: clone
         name: build
         templateRef:
@@ -42,3 +44,10 @@ spec:
       - name: CF_REPO_NAME
       - name: CF_BRANCH
     name: pipeline
+  volumes:
+  - name: docker-lr
+    secret:
+      items:
+      - key: .dockerconfigjson
+        path: config.json
+      secretName: docker-lr

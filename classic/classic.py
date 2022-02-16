@@ -76,6 +76,7 @@ class Classic:
         self._shortName=utils.safeName(pipeYaml['metadata']['shortName'])
         self._fullName=pipeYaml['metadata']['name']
 
+        self._secretVolumes=[]
         # variables
         self._variables=[]
         self.addVariable(Variable("CF_REPO_OWNER", "", "system", 0, "{{.Input.body.repository.owner.name}}"))
@@ -137,12 +138,15 @@ class Classic:
         elif stepType == 'build':
             tag=grabFieldValue(block, "tag", '${CF_BRANCH}')
             dockerfile=grabFieldValue(block, "dockerfile", "Dockerfile")
+            registry=grabFieldValue(block, "registry", "docker-config")
+            self.addSecretVolume(registry);
             return Plugins(name, "build", "0.0.1",
                 [
                     Parameter('image_name', self.replaceVariable(block['image_name'])),
                     Parameter("tag", self.replaceVariable(block['tag'])),
                     Parameter("dockerfile", self.replaceVariable(dockerfile)),
                     Parameter("working_directory", self.replaceVariable(cwd)),
+                    Parameter("docker-config", registry)
                 ])
         else:
             raise StepTypeNotSupported(stepType)
@@ -164,6 +168,9 @@ class Classic:
 
     def addVariable(self, var):
         self._variables.append(var)
+
+    def addSecretVolume(self, vol):
+        self._secretVolumes.append(vol)
 
     def print(self):
         print(f"v1.project:{self._project}")
@@ -198,3 +205,7 @@ class Classic:
     @property
     def variables(self):
         return self._variables
+
+    @property
+    def secretVolumes(self):
+        return self._secretVolumes
