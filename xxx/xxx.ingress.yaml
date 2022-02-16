@@ -9,8 +9,8 @@ spec:
       paths:
       - backend:
           service:
-            name: yeti1-eventsource-svc
+            name: yeti2-eventsource-svc
             port:
               number: 80
-        path: /webhooks/xxx/yeti1/github-e523c524-8eb3-11ec-8124-acde48001122
+        path: /webhooks/xxx/yeti2/github-2eb385fc-8eec-11ec-838a-acde48001122
         pathType: ImplementationSpecific

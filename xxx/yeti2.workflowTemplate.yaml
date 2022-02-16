@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: WorkflowTemplate
 metadata:
-  name: yeti1-pipeline-template
+  name: yeti2-pipeline-template
 spec:
   arguments:
     parameters: null
@@ -9,7 +9,8 @@ spec:
   templates:
   - dag:
       tasks:
-      - name: test
+      - depends: clone
+        name: test
         template: test
     inputs:
       parameters:
@@ -17,16 +18,27 @@ spec:
       - name: CF_REPO_NAME
       - name: CF_BRANCH
     name: pipeline
+  - arguments:
+      parameters:
+      - name: CF_REPO_OWER
+        value: ${CF_REPO_OWNER}
+      - name: CF_REPO_NAME
+        value: ${CF_REPO_NAME}
+      - name: CF_BRANCH
+        value: main
+    name: clone
+    templateRef:
+      name: c2csdp.git-clone.0.0.1
+      template: git-clone
   - name: test
     script:
       command:
-      - sh
+      - - sh
       image: ubuntu:latest
-      source: |
-        echo bar
-        ls
-        echo foo
+      source: 'ls
+
+        '
       volumeMounts:
       - mountPath: /codefresh/volume
         name: codefresh-volume
-      workingDir: /codefresh/volume
+      workingDir: '{{tasks.clone.outputs.parameters.WORKING_DIR}}'

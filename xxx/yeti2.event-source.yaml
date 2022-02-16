@@ -1,11 +1,11 @@
 apiVersion: argoproj.io/v1alpha1
 kind: EventSource
 metadata:
-  name: yeti1
+  name: yeti2
 spec:
   eventBusName: codefresh-eventbus
   github:
-    github-e523c524-8eb3-11ec-8124-acde48001122:
+    github-2eb385fc-8eec-11ec-838a-acde48001122:
       active: true
       apiToken:
         key: git_token
@@ -20,7 +20,7 @@ spec:
         - yeti-test
         owner: lrochette
       webhook:
-        endpoint: /webhooks/xxx/yeti1/github-e523c524-8eb3-11ec-8124-acde48001122
+        endpoint: /webhooks/xxx/yeti2/github-2eb385fc-8eec-11ec-838a-acde48001122
         method: POST
         port: '80'
         url: https://lrcsdp.support.cf-cd.com
