@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: WorkflowTemplate
 metadata:
-  name: yeti3-pipeline-template
+  name: yeti4-pipeline-template
 spec:
   arguments:
     parameters: null
@@ -23,21 +23,19 @@ spec:
           template: git-clone
       - arguments:
           parameters:
-          - name: image
-            value: ubuntu:latest
+          - name: image_name
+            value: lrochette/yeti4
+          - name: tag
+            value: latest
+          - name: dockerfile
+            value: Dockerfile
           - name: working_directory
             value: '{{ tasks.clone.outputs.parameters.WORKING_DIR }}'
-          - name: shell
-            value: sh
-          - name: commands
-            value: |+
-              ls
-
         depends: clone
-        name: test
+        name: build
         templateRef:
-          name: c2csdp.freestyle.0.0.1
-          template: freestyle
+          name: c2csdp.build.0.0.1
+          template: build
     inputs:
       parameters:
       - name: CF_REPO_OWNER

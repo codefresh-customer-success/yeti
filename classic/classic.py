@@ -22,6 +22,12 @@ from .variable import Variable
 ### GLOBALS ###
 
 ### FUNCTIONS ###
+def grabFieldValue(block, field, defaultValue):
+    value=defaultValue
+    if field in block:
+        value=block[field]
+    return value
+
 def parseRepo(str):
     if str.startswith("http"):
         list=str.split('/')
@@ -93,30 +99,24 @@ class Classic:
             raise ParallelModeNotSupported(self._fullName)
 
     def createStep(self, name, block):
-        type="freestyle"
-        if 'type' in block:
-            type = block['type']
+        stepType=grabFieldValue(block, "type", "freestyle")
+        shell=grabFieldValue(block, "shell", "sh")
+        cwd=grabFieldValue(block, "working_directory", "/codefresh/volume")
+        cwd=replaceParameterVariableByStepOutput(cwd, "WORKING_DIR")
 
-        shell="sh"
-        if 'shell' in block:
-            shell = block['shell']
+        if stepType == 'freestyle':
+            commands=""
+            if 'commands' in block:
+                logging.debug("COMMAND: %s", block['commands'])
+                str=''
+                for line in block['commands']:
+                    str += f"{line}\n"
+                str += "\n"     # adding empty line to force | output
+                commands=str
 
-        cwd="/codefresh/volume"
-        if 'working_directory' in block:
-            cwd = block['working_directory']
-
-        commands=""
-        if 'commands' in block:
-            logging.debug("COMMAND: %s", block['commands'])
-            str=''
-            for line in block['commands']:
-                str += f"{line}\n"
-            str += "\n"
-            commands=str
-        if type == 'freestyle':
             image=replaceParameterVariableByStepOutput(block['image'], "IMAGE")
             #self.logger.debug("Freestyle step cwd: %s", cwd)
-            cwd=replaceParameterVariableByStepOutput(cwd, "WORKING_DIR")
+
             #self.logger.debug("Freestyle step cwd after: %s", cwd)
 
             return Plugins(name, "freestyle", "0.0.1",
@@ -126,17 +126,26 @@ class Classic:
                     Parameter("shell",       self.replaceVariable(shell)),
                     Parameter("commands",    commands)
                 ])
-        elif type == 'git-clone':
+        elif stepType == 'git-clone':
             (repoOwner, repoName) = parseRepo(block['repo'])
-
             return Plugins(name, "git-clone", "0.0.1",
                 [
                     Parameter('CF_REPO_OWNER', self.replaceVariable(repoOwner)),
                     Parameter("CF_REPO_NAME", self.replaceVariable(repoName)),
                     Parameter("CF_BRANCH",    self.replaceVariable(block['revision']))
                 ])
+        elif stepType == 'build':
+            tag=grabFieldValue(block, "tag", '${CF_BRANCH}')
+            dockerfile=grabFieldValue(block, "dockerfile", "Dockerfile")
+            return Plugins(name, "build", "0.0.1",
+                [
+                    Parameter('image_name', self.replaceVariable(block['image_name'])),
+                    Parameter("tag", self.replaceVariable(block['tag'])),
+                    Parameter("dockerfile", self.replaceVariable(dockerfile)),
+                    Parameter("working_directory", self.replaceVariable(cwd)),
+                ])
         else:
-            raise StepTypeNotSupported(type)
+            raise StepTypeNotSupported(stepType)
 
     def replaceVariable(self, parameter):
         if not parameter:
