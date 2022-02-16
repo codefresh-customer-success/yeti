@@ -9,6 +9,18 @@ spec:
   templates:
   - dag:
       tasks:
+      - arguments:
+          parameters:
+          - name: CF_REPO_OWNER
+            value: '{{ inputs.parameters.CF_REPO_OWNER }}'
+          - name: CF_REPO_NAME
+            value: '{{ inputs.parameters.CF_REPO_NAME }}'
+          - name: CF_BRANCH
+            value: main
+        name: clone
+        templateRef:
+          name: c2csdp.git-clone.0.0.1
+          template: git-clone
       - depends: clone
         name: test
         template: test
@@ -18,25 +30,14 @@ spec:
       - name: CF_REPO_NAME
       - name: CF_BRANCH
     name: pipeline
-  - arguments:
-      parameters:
-      - name: CF_REPO_OWNER
-        value: '{{ inputs.parameters.CF_REPO_OWNER }}'
-      - name: CF_REPO_NAME
-        value: '{{ inputs.parameters.CF_REPO_NAME }}'
-      - name: CF_BRANCH
-        value: main
-    name: clone
-    templateRef:
-      name: c2csdp.git-clone.0.0.1
-      template: git-clone
   - name: test
     script:
       command:
-      -  sh
+      - - sh
       image: ubuntu:latest
-      source: |
-        ls
+      source: 'ls
+
+        '
       volumeMounts:
       - mountPath: /codefresh/volume
         name: codefresh-volume

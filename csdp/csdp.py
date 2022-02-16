@@ -138,7 +138,7 @@ class Csdp:
             self.workflowTemplate.manifest['spec']['templates'][0]['dag']['tasks'].append(taskBlock)
         elif step.type == "plugins":
             templateBlock=createPluginTaskBlock(step, previousStep)
-            self.workflowTemplate.manifest['spec']['templates'].append(templateBlock)
+            self.workflowTemplate.manifest['spec']['templates'][0]['dag']['tasks'].append(templateBlock)
         else:
             raise StepTypeNotSupported(step.type)
     #
