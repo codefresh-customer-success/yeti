@@ -1,14 +1,14 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Sensor
 metadata:
-  name: yeti2
+  name: yeti3
 spec:
   dependencies:
-  - eventName: github-efae41f2-8f5f-11ec-a5dc-acde48001122
-    eventSourceName: yeti2
+  - eventName: github-ef992d80-8f5f-11ec-8d05-acde48001122
+    eventSourceName: yeti3
     filters:
       data: null
-    name: github-efae41f2-8f5f-11ec-a5dc-acde48001122
+    name: github-ef992d80-8f5f-11ec-8d05-acde48001122
   eventBusName: codefresh-eventbus
   template:
     serviceAccountName: argo-server
@@ -20,21 +20,21 @@ spec:
         - dest: spec.arguments.parameters.0.value
           src:
             dataTemplate: '{{.Input.body.repository.owner.name}}'
-            dependencyName: github-efae41f2-8f5f-11ec-a5dc-acde48001122
+            dependencyName: github-ef992d80-8f5f-11ec-8d05-acde48001122
         - dest: spec.arguments.parameters.1.value
           src:
             dataTemplate: '{{.Input.body.repository.name}}'
-            dependencyName: github-efae41f2-8f5f-11ec-a5dc-acde48001122
+            dependencyName: github-ef992d80-8f5f-11ec-8d05-acde48001122
         - dest: spec.arguments.parameters.2.value
           src:
             dataTemplate: '{{.Input.body.ref}}'
-            dependencyName: github-efae41f2-8f5f-11ec-a5dc-acde48001122
+            dependencyName: github-ef992d80-8f5f-11ec-8d05-acde48001122
         source:
           resource:
             apiVersion: argoproj.io/v1alpha1
             kind: WorkflowTemplate
             metadata:
-              generateName: yeti2-pipeline-
+              generateName: yeti3-pipeline-
             spec:
               arguments:
                 parameters:
@@ -54,6 +54,6 @@ spec:
                     requests:
                       storage: 20Gi
               workflowTemplateRef:
-                name: yeti2-pipeline-template
-      conditions: github-efae41f2-8f5f-11ec-a5dc-acde48001122
+                name: yeti3-pipeline-template
+      conditions: github-ef992d80-8f5f-11ec-8d05-acde48001122
       name: pipeline

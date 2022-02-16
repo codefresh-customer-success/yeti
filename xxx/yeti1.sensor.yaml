@@ -4,11 +4,11 @@ metadata:
   name: yeti1
 spec:
   dependencies:
-  - eventName: github-653ca66e-8f5d-11ec-850d-acde48001122
+  - eventName: github-efc2d950-8f5f-11ec-b5b1-acde48001122
     eventSourceName: yeti1
     filters:
       data: null
-    name: github-653ca66e-8f5d-11ec-850d-acde48001122
+    name: github-efc2d950-8f5f-11ec-b5b1-acde48001122
   eventBusName: codefresh-eventbus
   template:
     serviceAccountName: argo-server
@@ -20,15 +20,15 @@ spec:
         - dest: spec.arguments.parameters.0.value
           src:
             dataTemplate: '{{.Input.body.repository.owner.name}}'
-            dependencyName: github-653ca66e-8f5d-11ec-850d-acde48001122
+            dependencyName: github-efc2d950-8f5f-11ec-b5b1-acde48001122
         - dest: spec.arguments.parameters.1.value
           src:
             dataTemplate: '{{.Input.body.repository.name}}'
-            dependencyName: github-653ca66e-8f5d-11ec-850d-acde48001122
+            dependencyName: github-efc2d950-8f5f-11ec-b5b1-acde48001122
         - dest: spec.arguments.parameters.2.value
           src:
             dataTemplate: '{{.Input.body.ref}}'
-            dependencyName: github-653ca66e-8f5d-11ec-850d-acde48001122
+            dependencyName: github-efc2d950-8f5f-11ec-b5b1-acde48001122
         source:
           resource:
             apiVersion: argoproj.io/v1alpha1
@@ -55,5 +55,5 @@ spec:
                       storage: 20Gi
               workflowTemplateRef:
                 name: yeti1-pipeline-template
-      conditions: github-653ca66e-8f5d-11ec-850d-acde48001122
+      conditions: github-efc2d950-8f5f-11ec-b5b1-acde48001122
       name: pipeline
