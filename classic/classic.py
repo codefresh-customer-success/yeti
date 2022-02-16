@@ -105,7 +105,7 @@ class Classic:
 
             return Plugins(name, "git-clone", "0.0.1",
                 [
-                    Parameter('CF_REPO_OWER', self.replaceVariable(repoOwner)),
+                    Parameter('CF_REPO_OWNER', self.replaceVariable(repoOwner)),
                     Parameter("CF_REPO_NAME", self.replaceVariable(repoName)),
                     Parameter("CF_BRANCH",    self.replaceVariable(block['revision']))
                 ])
