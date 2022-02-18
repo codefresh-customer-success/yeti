@@ -1,23 +1,22 @@
 #!/usr/bin/env python3
 
 ### IMPORTS ###
-import yaml
 import logging
-import utils
 import re
+import yaml
 
-from .exceptions import ManifestMissingValueException
+import utils
+
+
+#from .exceptions import ManifestMissingValueException
 from .exceptions import InvalidYamlAsPipeline
 from .exceptions import ParallelModeNotSupported
 #from .freestyle  import Freestyle
 from .plugins    import Plugins
 from .plugins    import Parameter
 
-from .step       import Step
-
 from .variable import Variable
 
-#from ..utils import safeName
 
 ### GLOBALS ###
 
