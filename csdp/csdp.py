@@ -21,6 +21,7 @@ def create_plugin_task_block(plugin, previous):
     '''Create a block of Yaml in a dag to call a plugin'''
     block = {
         "name": plugin.name,
+        "continueOn": {"failed":not bool(plugin.fail_fast)},
         "templateRef": {
             "name": f"c2csdp.{plugin.plugin_name}.{plugin.plugin_version}",
             "template": plugin.plugin_name

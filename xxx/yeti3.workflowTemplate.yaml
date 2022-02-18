@@ -17,6 +17,8 @@ spec:
             value: yeti-test
           - name: CF_BRANCH
             value: '{{ inputs.parameters.CF_BRANCH }}'
+        continueOn:
+          failed: false
         name: clone
         templateRef:
           name: c2csdp.git-clone.0.0.1
@@ -33,6 +35,8 @@ spec:
             value: |+
               ls
 
+        continueOn:
+          failed: false
         depends: clone
         name: test
         templateRef:

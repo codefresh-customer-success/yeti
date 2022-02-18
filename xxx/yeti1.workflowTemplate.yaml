@@ -23,6 +23,8 @@ spec:
               ls
               echo foo
 
+        continueOn:
+          failed: false
         name: test
         templateRef:
           name: c2csdp.freestyle.0.0.1

@@ -1,17 +1,8 @@
 #!/usr/bin/env python3
-
-#
-# Classic Triggers
-#
+'''Super class for a step with common fields'''
 
 ### IMPORTS ###
 import logging
-#import string
-
-from .exceptions import StepTypeNotSupported
-from .exceptions import VariableNotSupportedInField
-from .exceptions import  ShellTypeNotSupported
-
 
 ### GLOBALS ###
 
@@ -20,19 +11,21 @@ from .exceptions import  ShellTypeNotSupported
 
 ### CLASSES ###
 class Step:
-    def __init__(self, name, stype):
-
+    '''Super class for step'''
+    def __init__(self, name, stype, fail_fast):
         self.logger = logging.getLogger(type(self).__name__)
         self.logger.debug("Creating New Step: %s", name)
 
         self.name = name
         self.type = stype
+        self.fail_fast = fail_fast
 
     #
     # Setters and getters
     #
     @property
     def name(self):
+        'Return the name of the step'
         return self._name
     @name.setter
     def name(self, value):
@@ -44,7 +37,16 @@ class Step:
 
     @property
     def type(self):
+        '''Return the step type'''
         return self._type
     @type.setter
     def type(self, value):
         self._type = value
+
+    @property
+    def fail_fast(self):
+        '''Return the step fail_fast'''
+        return self._fail_fast
+    @fail_fast.setter
+    def fail_fast(self, value):
+        self._fail_fast = value

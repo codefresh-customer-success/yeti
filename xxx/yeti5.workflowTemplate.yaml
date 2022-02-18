@@ -17,6 +17,8 @@ spec:
             value: yeti-test
           - name: CF_BRANCH
             value: '{{ inputs.parameters.CF_BRANCH }}'
+        continueOn:
+          failed: false
         name: clone
         templateRef:
           name: c2csdp.git-clone.0.0.1
@@ -33,6 +35,8 @@ spec:
             value: '{{ tasks.clone.outputs.parameters.WORKING_DIR }}'
           - name: docker-config
             value: docker-lr
+        continueOn:
+          failed: false
         depends: clone
         name: build
         templateRef:

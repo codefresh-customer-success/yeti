@@ -114,6 +114,7 @@ class Classic:
         shell=grab_field_value(block, "shell", "sh")
         cwd=grab_field_value(block, "working_directory", "/codefresh/volume")
         cwd=replace_parameter_variable_by_step_output(cwd, "WORKING_DIR")
+        fail_fast=grab_field_value(block, "fail_fast", "false")
 
         if step_type == 'freestyle':
             commands=""
@@ -127,10 +128,9 @@ class Classic:
 
             image=replace_parameter_variable_by_step_output(block['image'], "IMAGE")
             #self.logger.debug("Freestyle step cwd: %s", cwd)
-
             #self.logger.debug("Freestyle step cwd after: %s", cwd)
 
-            return Plugins(name, "freestyle", "0.0.1",
+            return Plugins(name, fail_fast, "freestyle", "0.0.1",
                 [
                     Parameter('image',       self.replace_variable(image)),
                     Parameter("working_directory", self.replace_variable(cwd)),
@@ -139,7 +139,7 @@ class Classic:
                 ])
         elif step_type == 'git-clone':
             (repo_owner, repo_name) = parse_repo_field(block['repo'])
-            return Plugins(name, "git-clone", "0.0.1",
+            return Plugins(name, fail_fast, "git-clone", "0.0.1",
                 [
                     Parameter('CF_REPO_OWNER', self.replace_variable(repo_owner)),
                     Parameter("CF_REPO_NAME", self.replace_variable(repo_name)),
@@ -150,7 +150,7 @@ class Classic:
             dockerfile=grab_field_value(block, "dockerfile", "Dockerfile")
             registry=grab_field_value(block, "registry", "docker-config")
             self.add_secret_volume(registry);
-            return Plugins(name, "build", "0.0.1",
+            return Plugins(name, fail_fast, "build", "0.0.1",
                 [
                     Parameter('image_name', self.replace_variable(block['image_name'])),
                     Parameter("tag", self.replace_variable(tag)),

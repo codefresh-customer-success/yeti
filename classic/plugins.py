@@ -42,10 +42,10 @@ class Parameter:
 
 class Plugins(Step):
     'Special step to call typed-step and freestyle'
-    def __init__(self, name, plugin_name, version, parameters):
+    def __init__(self, name, fail_fast, plugin_name, version, parameters):
         self.logger = logging.getLogger(type(self).__name__)
 
-        super().__init__(name, "plugins")
+        super().__init__(name, "plugins", fail_fast)
         self.plugin_name=plugin_name
         self.plugin_version=version
         self.parameters=parameters
