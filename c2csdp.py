@@ -7,6 +7,7 @@ import classic
 import csdp
 
 def parse_arguments():
+    '''Defining arguments to the script'''
     parser = argparse.ArgumentParser(description='Convert Codefresh Classic pipelines')
     parser.add_argument('filename',
         help='File containing the Codefresh Classic pipeline yaml code')
@@ -23,7 +24,7 @@ def parse_arguments():
 #   Main
 #
 def main():
-
+    '''main function'''
     args=parse_arguments()
     log_format = "%(asctime)s:%(levelname)s:%(name)s.%(funcName)s: %(message)s"
     logging.basicConfig(format = log_format, level = args.log_level.upper())
@@ -35,21 +36,21 @@ def main():
     for obj in v1.triggers:
         trig = classic.Trigger(obj)
         logging.info("Processing Trigger %s", trig.name)
-        v2.convertTrigger(trig)
+        v2.convert_trigger(trig)
 
     logging.info("Processing steps")
     previous = None
     for step in v1.steps:
-        v2.convertStep(step, previous)
+        v2.convert_step(step, previous)
         previous = step.name
 
     logging.info("Processing variables")
     for var in v1.variables:
-        v2.convertVariable(var, "github", v2.uuid)
+        v2.convert_variable(var, "github", v2.uuid)
 
     logging.info("Processing secret volumes")
     for vol in v1.secretVolumes:
-        v2.addSecretVolume(vol)
+        v2.add_secret_volume(vol)
 
     v2.save()
 

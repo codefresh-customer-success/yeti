@@ -5,12 +5,12 @@ github-${uuid}:
   repositories:
     - owner: ${owner}
       names:
-        - ${repoName}
+        - ${repo_name}
   webhook:
     port: '80'
     method: POST
-    endpoint: /webhooks/${project}/${shortName}/${provider}-${uuid}
-    url: ${ingressUrl}
+    endpoint: /webhooks/${project}/${name}/${provider}-${uuid}
+    url: ${ingress_url}
   active: true
   insecure: false
   contentType: json

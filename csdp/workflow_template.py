@@ -18,28 +18,31 @@ def str_presenter(dumper, data):
 
 ### CLASSES ###
 class WorkflowTemplate:
+    '''Implementation fo the Workflow Tewmplate'''
     def __init__(self, name):
         self.logger = logging.getLogger(type(self).__name__)
         yaml_filename = "./manifests/workflowTemplate.template.yaml"
 
-        with open(yaml_filename, mode='r') as file:
+        with open(yaml_filename, mode='r', encoding='UTF-8') as file:
             contents = file.read()
             template = Template(contents)
 
         values = {
             'shortName': name
         }
-        workflowTemplateYaml=template.substitute(values)
+        workflow_template_yaml=template.substitute(values)
         yaml.add_representer(str, str_presenter)
         yaml.representer.SafeRepresenter.add_representer(str, str_presenter) # to use with safe_dum
-        self._manifest=yaml.safe_load(workflowTemplateYaml)
+        self._manifest=yaml.safe_load(workflow_template_yaml)
 
     @property
     def manifest(self):
+        '''Return the YAML manifest'''
         return self._manifest
 
     def save(self, project, name):
-        workflowTemplateFilename=f"{project}/{name}.workflowTemplate.yaml"
-        workflowTemplateFile = open(workflowTemplateFilename, "w")
-        yaml.dump(self.manifest, workflowTemplateFile)
-        self.logger.info("Create WorkflowTemplate: %s", workflowTemplateFilename)
+        '''Save the workflow template as a file <project>/<name>.workflowtemplate.yaml'''
+        workflow_template_filename=f"{project}/{name}.workflowTemplate.yaml"
+        workflow_template_file = open(workflow_template_filename, "w", encoding='UTF-8')
+        yaml.dump(self.manifest, workflow_template_file)
+        self.logger.info("Create WorkflowTemplate: %s", workflow_template_filename)
