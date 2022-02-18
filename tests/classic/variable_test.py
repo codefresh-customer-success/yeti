@@ -1,7 +1,7 @@
 '''
     Variable class Testing
 '''
-from ..classic.variable import Variable
+from classic.variable import Variable
 import pytest
 
 
