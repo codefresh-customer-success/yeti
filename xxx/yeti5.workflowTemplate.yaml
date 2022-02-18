@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: WorkflowTemplate
 metadata:
-  name: yeti4-pipeline-template
+  name: yeti5-pipeline-template
 spec:
   arguments:
     parameters: []
@@ -43,6 +43,8 @@ spec:
       - name: CF_REPO_OWNER
       - name: CF_REPO_NAME
       - name: CF_BRANCH
+      - name: VAR1
+      - name: VAR2
     name: pipeline
   volumes:
   - name: docker-lr

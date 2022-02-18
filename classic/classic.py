@@ -30,7 +30,7 @@ def grab_field_value(block, field, default_value):
 
 def parse_repo_field(string):
     '''Parse the repo field to extract owner/name if it's a URL'''
-    if str.startswith("http"):
+    if string.startswith("http"):
         chunks=string.split('/')
         repo=chunks[len(chunks)-1]
         repo=repo.replace(".git", "")
@@ -64,7 +64,7 @@ class Classic:
         self.logger = logging.getLogger(type(self).__name__)
         self.logger.info("Getting pipeline YAML in %s", filename)
 
-        with open(filename, encoding='UTF-8', "r") as stream:
+        with open(filename, "r", encoding='UTF-8') as stream:
             try:
                 pipeline_yaml = yaml.safe_load(stream)
             except yaml.YAMLError as exc:
@@ -82,19 +82,21 @@ class Classic:
         self._full_name=pipeline_yaml['metadata']['name']
 
         self._secret_volumes=[]
-        # variables
+
         self._variables=[]
         self.add_variable(Variable("CF_REPO_OWNER", "", "system", 0, "{{.Input.body.repository.owner.name}}"))
         self.add_variable(Variable("CF_REPO_NAME", "", "system", 1, "{{.Input.body.repository.name}}"))
         self.add_variable(Variable("CF_BRANCH", "", "system", 2, "{{.Input.body.ref}}"))
         variable_counter=3
         for var in pipeline_yaml['spec']['variables']:
+            self.add_variable(Variable(var['key'], var['value'], "pipeline", variable_counter, ""))
+            variable_counter = +1
 
         # spec info
         self._triggers=pipeline_yaml['spec']['triggers']
         self._steps=[]
         for s in pipeline_yaml['spec']['steps']:
-            self.addStep(s, pipeline_yaml['spec']['steps'][s])
+            self.add_step(s, pipeline_yaml['spec']['steps'][s])
 
 
         # No parallel mode for now
@@ -130,90 +132,105 @@ class Classic:
 
             return Plugins(name, "freestyle", "0.0.1",
                 [
-                    Parameter('image',       self.replaceVariable(image)),
-                    Parameter("working_directory", self.replaceVariable(cwd)),
-                    Parameter("shell",       self.replaceVariable(shell)),
+                    Parameter('image',       self.replace_variable(image)),
+                    Parameter("working_directory", self.replace_variable(cwd)),
+                    Parameter("shell",       self.replace_variable(shell)),
                     Parameter("commands",    commands)
                 ])
         elif step_type == 'git-clone':
-            (repoOwner, repoName) = parse_repo_field(block['repo'])
+            (repo_owner, repo_name) = parse_repo_field(block['repo'])
             return Plugins(name, "git-clone", "0.0.1",
                 [
-                    Parameter('CF_REPO_OWNER', self.replaceVariable(repoOwner)),
-                    Parameter("CF_REPO_NAME", self.replaceVariable(repoName)),
-                    Parameter("CF_BRANCH",    self.replaceVariable(block['revision']))
+                    Parameter('CF_REPO_OWNER', self.replace_variable(repo_owner)),
+                    Parameter("CF_REPO_NAME", self.replace_variable(repo_name)),
+                    Parameter("CF_BRANCH",    self.replace_variable(block['revision']))
                 ])
         elif step_type == 'build':
             tag=grab_field_value(block, "tag", '${CF_BRANCH}')
             dockerfile=grab_field_value(block, "dockerfile", "Dockerfile")
             registry=grab_field_value(block, "registry", "docker-config")
-            self.addSecretVolume(registry);
+            self.add_secret_volume(registry);
             return Plugins(name, "build", "0.0.1",
                 [
-                    Parameter('image_name', self.replaceVariable(block['image_name'])),
-                    Parameter("tag", self.replaceVariable(block['tag'])),
-                    Parameter("dockerfile", self.replaceVariable(dockerfile)),
-                    Parameter("working_directory", self.replaceVariable(cwd)),
+                    Parameter('image_name', self.replace_variable(block['image_name'])),
+                    Parameter("tag", self.replace_variable(tag)),
+                    Parameter("dockerfile", self.replace_variable(dockerfile)),
+                    Parameter("working_directory", self.replace_variable(cwd)),
                     Parameter("docker-config", registry)
                 ])
         else:
             raise StepTypeNotSupported(step_type)
 
     def replace_variable(self, parameter):
+        '''Try to repalce a variable ${{}} by a matching input parameter'''
         if not parameter:
             return parameter
         if not '$' in parameter:
             return parameter
         regexp = r"\$\{{1,2}([^}]+)\}{1,2}"
         subst="\\1"
-        for v in self.variables:
-            strippedParameter=re.sub(regexp, subst,parameter,0)
-            if strippedParameter == v.name:
-                return "{{ inputs.parameters.%s }}" % (strippedParameter)
+        for var in self.variables:
+            stripped_parameter=re.sub(regexp, subst,parameter,0)
+            if stripped_parameter == var.name:
+                return "{{ inputs.parameters.%s }}" % (stripped_parameter)
 
     def add_step(self, name, block):
+        '''Add the step YAML block the Classic object'''
         self._steps.append(self.create_step(name, block))
 
     def add_variable(self, var):
+        '''Add a Variable to the Classic Object'''
         self._variables.append(var)
 
     def add_secret_volume(self, vol):
+        '''Add a secret Volume (for docker secret for example) to the Classic object'''
         self._secret_volumes.append(vol)
 
     def print(self):
+        '''Method to print the Classic object'''
         print(f"v1.project:{self._project}")
         print(f"v1.name:{self._short_name}")
         #print(f"v1.yaml:{self._yaml}")
     @property
     def manifest(self):
+        '''Return the manifest Yaml'''
         return self._yaml
 
     @property
     def project(self):
+        '''Return the project name'''
         return self._project
 
     @property
     def name(self):
+        '''return the pipleine short name - no project'''
         return self._short_name
 
     @property
-    def fullName(self):
+    def full_name(self):
+        '''Return the full name of the pipeline'''
         return self._full_name
+
     @property
     def mode(self):
+        '''Return the pipeline mode aka parallel'''
         return self._mode
     @property
     def triggers(self):
+        '''Return the list of triggers'''
         return self._triggers
 
     @property
     def steps(self):
+        '''Return the list of steps'''
         return self._steps
 
     @property
     def variables(self):
+        '''Return the list of variables'''
         return self._variables
 
     @property
     def secretVolumes(self):
+        '''Return the list of secret volumes'''
         return self._secret_volumes

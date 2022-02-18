@@ -2,9 +2,9 @@
 
 ### IMPORTS ###
 import logging
+from string import Template
 import yaml
 
-from string import Template
 
 ### GLOBALS ###
 def str_presenter(dumper, data):
