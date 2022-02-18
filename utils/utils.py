@@ -12,6 +12,6 @@ def safeName (name):
     '''Return a kubernetes valid string'''
     if not isinstance(name, str):
         raise TypeError 
-   return name.replace('/','__').lower()
+    return name.replace('/','__').lower()
 
 ### CLASSES ###
