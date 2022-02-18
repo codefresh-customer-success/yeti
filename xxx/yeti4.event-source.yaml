@@ -1,0 +1,31 @@
+apiVersion: argoproj.io/v1alpha1
+kind: EventSource
+metadata:
+  name: yeti4
+spec:
+  eventBusName: codefresh-eventbus
+  github:
+    github-38fda886-90ee-11ec-9518-acde48001122:
+      active: true
+      apiToken:
+        key: git_token
+        name: autopilot-secret
+      contentType: json
+      deleteHookOnFinish: true
+      events:
+      - push
+      insecure: false
+      repositories:
+      - names:
+        - yeti-test
+        owner: lrochette
+      webhook:
+        endpoint: /webhooks/xxx/yeti4/github-38fda886-90ee-11ec-9518-acde48001122
+        method: POST
+        port: '80'
+        url: https://lrcsdp.support.cf-cd.com
+  service:
+    ports:
+    - port: 80
+  template:
+    serviceAccountName: argo-server

@@ -30,7 +30,8 @@ class EmptyObjectException(Exception):
     pass
 class VariableNotSupportedInField(Exception):
     pass
-
+class VariableSourceNotSupported(Exception):
+    pass
 class OnlyOneEventSupportbyTrigger(Exception):
     pass
 class ShellTypeNotSupported(Exception):

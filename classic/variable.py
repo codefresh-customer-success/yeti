@@ -4,6 +4,7 @@ Variable class Implementation
 '''
 ### IMPORTS ###
 import logging
+from .exceptions import VariableSourceNotSupported
 
 ### GLOBALS ###
 
@@ -11,7 +12,7 @@ import logging
 
 ### CLASSES ###
 class Variable:
-    '''Implementation fo the diffrent types of variables (system, pipeline, project, ...'''
+    '''Implementation fo the different types of variables (system, pipeline, project, ...'''
     def __init__(self, name, value, source, order, path):
         self.logger = logging.getLogger(type(self).__name__)
 

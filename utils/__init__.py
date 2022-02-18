@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 ### IMPORTS ###
-from .utils import safeName
+from .utils import safe_name
 
 ### GLOBALS ###
 

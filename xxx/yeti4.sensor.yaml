@@ -1,0 +1,59 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Sensor
+metadata:
+  name: yeti4
+spec:
+  dependencies:
+  - eventName: github-38fda886-90ee-11ec-9518-acde48001122
+    eventSourceName: yeti4
+    filters:
+      data: null
+    name: github-38fda886-90ee-11ec-9518-acde48001122
+  eventBusName: codefresh-eventbus
+  template:
+    serviceAccountName: argo-server
+  triggers:
+  - template:
+      argoWorkflow:
+        operation: submit
+        parameters:
+        - dest: spec.arguments.parameters.0.value
+          src:
+            dataTemplate: '{{.Input.body.repository.owner.name}}'
+            dependencyName: github-38fda886-90ee-11ec-9518-acde48001122
+        - dest: spec.arguments.parameters.1.value
+          src:
+            dataTemplate: '{{.Input.body.repository.name}}'
+            dependencyName: github-38fda886-90ee-11ec-9518-acde48001122
+        - dest: spec.arguments.parameters.2.value
+          src:
+            dataTemplate: '{{.Input.body.ref}}'
+            dependencyName: github-38fda886-90ee-11ec-9518-acde48001122
+        source:
+          resource:
+            apiVersion: argoproj.io/v1alpha1
+            kind: WorkflowTemplate
+            metadata:
+              generateName: yeti4-pipeline-
+            spec:
+              arguments:
+                parameters:
+                - name: CF_REPO_OWNER
+                  value: ''
+                - name: CF_REPO_NAME
+                  value: ''
+                - name: CF_BRANCH
+                  value: ''
+              volumeClaimTemplates:
+              - metadata:
+                  name: codefresh-volume
+                spec:
+                  accessModes:
+                  - ReadWriteOnce
+                  resources:
+                    requests:
+                      storage: 20Gi
+              workflowTemplateRef:
+                name: yeti4-pipeline-template
+      conditions: github-38fda886-90ee-11ec-9518-acde48001122
+      name: pipeline

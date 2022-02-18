@@ -8,7 +8,7 @@ import string
 ### GLOBALS ###
 
 ### FUNCTIONS ###
-def safeName (name):
+def safe_name (name):
     '''Return a kubernetes valid string'''
     if not isinstance(name, str):
         raise TypeError 
