@@ -12,5 +12,33 @@ spec:
             name: yeti5-eventsource-svc
             port:
               number: 80
-        path: /webhooks/xxx/yeti5/github-0599a7e0-910e-11ec-903e-acde48001122
+        path: /webhooks/xxx/yeti5/github-950b0ffc-9110-11ec-8813-acde48001122
+        pathType: ImplementationSpecific
+      - backend:
+          service:
+            name: yeti4-eventsource-svc
+            port:
+              number: 80
+        path: /webhooks/xxx/yeti4/github-951b8580-9110-11ec-91b0-acde48001122
+        pathType: ImplementationSpecific
+      - backend:
+          service:
+            name: yeti3-eventsource-svc
+            port:
+              number: 80
+        path: /webhooks/xxx/yeti3/github-952b643c-9110-11ec-9f11-acde48001122
+        pathType: ImplementationSpecific
+      - backend:
+          service:
+            name: yeti2-eventsource-svc
+            port:
+              number: 80
+        path: /webhooks/xxx/yeti2/github-953c4482-9110-11ec-b510-acde48001122
+        pathType: ImplementationSpecific
+      - backend:
+          service:
+            name: yeti1-eventsource-svc
+            port:
+              number: 80
+        path: /webhooks/xxx/yeti1/github-954e4038-9110-11ec-8986-acde48001122
         pathType: ImplementationSpecific

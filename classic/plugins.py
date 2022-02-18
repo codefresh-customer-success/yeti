@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
-
+'''
+Plugin class to repesent typed-step nad freestyle
+'''
 #
 # Classic Triggers
 #
@@ -15,6 +17,7 @@ from .step import Step
 
 ### CLASSES ###
 class Parameter:
+    '''Parameter to a plugins'''
     def __init__(self, pName, pValue):
         self.logger = logging.getLogger(type(self).__name__)
         self.name=pName
@@ -22,6 +25,7 @@ class Parameter:
 
     @property
     def name(self):
+        'Return the name of the parameter'
         return self._name
     @name.setter
     def name(self, value):
@@ -30,40 +34,45 @@ class Parameter:
         self._name = value
     @property
     def value(self):
+        'Return the value of the parameter'
         return self._value
     @value.setter
     def value(self, val):
         self._value = val
 
 class Plugins(Step):
-    def __init__(self, name, pluginName, version, parameters):
+    'Special step to call typed-step and freestyle'
+    def __init__(self, name, plugin_name, version, parameters):
         self.logger = logging.getLogger(type(self).__name__)
 
         super().__init__(name, "plugins")
-        self.pluginName=pluginName
-        self.pluginVersion=version
+        self.plugin_name=plugin_name
+        self.plugin_version=version
         self.parameters=parameters
 
     @property
-    def pluginName(self):
-        return self._pluginName
-    @pluginName.setter
-    def pluginName(self, value):
+    def plugin_name(self):
+        'Return the name of the plugin'
+        return self._plugin_name
+    @plugin_name.setter
+    def plugin_name(self, value):
         if not isinstance(value, str):
             raise TypeError
-        self._pluginName = value
+        self._plugin_name = value
 
     @property
-    def pluginVersion(self):
-        return self._pluginVersion
-    @pluginVersion.setter
-    def pluginVersion(self, value):
+    def plugin_version(self):
+        'Return the plugin version'
+        return self._plugin_version
+    @plugin_version.setter
+    def plugin_version(self, value='0.0.1'):
         if not isinstance(value, str):
             raise TypeError
-        self._pluginVersion = value
+        self._plugin_version = value
 
     @property
     def parameters(self):
+        'Return the list of parameters'
         return self._parameters
     @parameters.setter
     def parameters(self, value):

@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
-
+'''
+Codefresh Classic to CSDP pipeline converter
+'''
 ### IMPORTS ###
 import argparse
 import logging
@@ -29,30 +31,30 @@ def main():
     log_format = "%(asctime)s:%(levelname)s:%(name)s.%(funcName)s: %(message)s"
     logging.basicConfig(format = log_format, level = args.log_level.upper())
 
-    v1=classic.Classic(args.filename)
-    v2=csdp.Csdp(v1, args.ingress_host, args.volume_size)
+    v1_pipeline=classic.Classic(args.filename)
+    v2_object=csdp.Csdp(v1_pipeline, args.ingress_host, args.volume_size)
 
     logging.info("Processing triggers")
-    for obj in v1.triggers:
+    for obj in v1_pipeline.triggers:
         trig = classic.Trigger(obj)
         logging.info("Processing Trigger %s", trig.name)
-        v2.convert_trigger(trig)
+        v2_object.convert_trigger(trig)
 
     logging.info("Processing steps")
     previous = None
-    for step in v1.steps:
-        v2.convert_step(step, previous)
+    for step in v1_pipeline.steps:
+        v2_object.convert_step(step, previous)
         previous = step.name
 
     logging.info("Processing variables")
-    for var in v1.variables:
-        v2.convert_variable(var, "github", v2.uuid)
+    for var in v1_pipeline.variables:
+        v2_object.convert_variable(var, "github", v2_object.uuid)
 
     logging.info("Processing secret volumes")
-    for vol in v1.secretVolumes:
-        v2.add_secret_volume(vol)
+    for vol in v1_pipeline.secretVolumes:
+        v2_object.add_secret_volume(vol)
 
-    v2.save()
+    v2_object.save()
 
 if __name__ == "__main__":
     main()

@@ -22,8 +22,8 @@ def create_plugin_task_block(plugin, previous):
     block = {
         "name": plugin.name,
         "templateRef": {
-            "name": f"c2csdp.{plugin.pluginName}.{plugin.pluginVersion}",
-            "template": plugin.pluginName
+            "name": f"c2csdp.{plugin.plugin_name}.{plugin.plugin_version}",
+            "template": plugin.plugin_name
         },
         "arguments": {
             "parameters": []
