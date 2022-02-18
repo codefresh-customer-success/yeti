@@ -15,14 +15,12 @@ class Variable:
     '''Implementation fo the different types of variables (system, pipeline, project, ...'''
     def __init__(self, name, value, source, order, path):
         self.logger = logging.getLogger(type(self).__name__)
-
-        self.logger.debug("Adding variable %s (%s) from %s #%d",
-            name, value, source, order)
+        self.logger.debug("Adding variable %s (%s) from %s #%d", name, value, source, order)
         self.name = name            # Name
         self.value = value          # value
         self.source = source        # project, pipeline, ....
-        self.order = order          # for position in Argo as itdoes not support by name
-        self._path = path           # event source payload path
+        self.order = order          # for position in Argo as it does not support by name
+        self.path = path           # event source payload path
 
 # setters and getters
 #
@@ -41,7 +39,7 @@ class Variable:
     # order of the parameter as workflow don't support name
     @property
     def order(self):
-        '''Return the order of the variable 
+        '''Return the order of the variable
             usefult to match payload to variable as naming assignment is not supported'''
         return self._order
     @order.setter

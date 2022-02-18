@@ -18,10 +18,10 @@ from .step import Step
 ### CLASSES ###
 class Parameter:
     '''Parameter to a plugins'''
-    def __init__(self, pName, pValue):
+    def __init__(self, plugin_name, plugin_value):
         self.logger = logging.getLogger(type(self).__name__)
-        self.name=pName
-        self.value=pValue
+        self.name=plugin_name
+        self.value=plugin_value
 
     @property
     def name(self):
