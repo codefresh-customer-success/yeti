@@ -1,0 +1,96 @@
+version: '1.0'
+kind: pipeline
+metadata:
+  name: xxx/yeti5
+  project: xxx
+  projectId: 61f2ef65d6609f72bf9bb91d
+  revision: 3
+  accountId: 600edc0bdffeb2bc4981d15a
+  created_at: '2022-02-18T21:26:36.151Z'
+  updated_at: '2022-02-18T21:27:17.464Z'
+  shortName: yeti5
+  deprecate: {}
+  originalYamlString: |+
+    # More examples of Codefresh YAML can be found at
+    # https://codefresh.io/docs/docs/yaml-examples/examples/
+
+    version: "1.0"
+    # Stages can help you organize your steps in stages
+    stages:
+      - "clone"
+      - "build"
+      - "test"
+
+    steps:
+      clone:
+        title: "Cloning repository"
+        type: "git-clone"
+        repo: "lrochette/yeti-test"
+        revision: "${{CF_BRANCH}}"
+        git: "github"
+        stage: "clone"
+
+      build:
+        title: "Building Docker image"
+        type: "build"
+        image_name: "lrochette/yeti4"
+        registry: docker-lr
+        working_directory: "${{clone}}"
+        tag: "latest"
+        stage: "build"
+
+
+  id: 62100f0c2367c43ff4e9936e
+spec:
+  triggers:
+    - name: lrochette/yeti-test
+      type: git
+      repo: lrochette/yeti-test
+      events:
+        - push.heads
+      pullRequestAllowForkEvents: false
+      commentRegex: /.*/gi
+      branchRegex: /.*/gi
+      branchRegexInput: regex
+      provider: github
+      disabled: false
+      options:
+        noCache: false
+        noCfCache: false
+        resetVolume: false
+      context: github
+      contexts: []
+      verified: true
+      status: verified
+      id: 62100f0d1221958253067b94
+      endpoint: 'https://g.codefresh.io/api/providers/github/hook/FlcpaNIee6'
+      secret: PdN5Zw4hAnm9KPHT
+  stages:
+    - clone
+    - build
+    - test
+  variables:
+    - key: VAR1
+      value: value1
+      encrypted: false
+    - key: VAR2
+      value: value2
+      encrypted: false
+  contexts: []
+  steps:
+    clone:
+      title: Cloning repository
+      type: git-clone
+      repo: lrochette/yeti-test
+      revision: '${{CF_BRANCH}}'
+      git: github
+      stage: clone
+    build:
+      title: Building Docker image
+      type: build
+      image_name: lrochette/yeti4
+      registry: docker-lr
+      working_directory: '${{clone}}'
+      tag: latest
+      stage: build
+

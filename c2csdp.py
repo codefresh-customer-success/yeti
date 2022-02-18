@@ -3,7 +3,6 @@
 ### IMPORTS ###
 import argparse
 import logging
-import yaml
 import classic
 import csdp
 
