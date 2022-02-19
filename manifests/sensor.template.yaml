@@ -31,7 +31,7 @@ spec:
                   parameters: []
                     # insert parameters here
                 workflowTemplateRef:
-                  name: ${shortName}-pipeline-template
+                  name: ${project}-${shortName}-pipeline-template
                 volumeClaimTemplates:
                   - metadata:
                       name: codefresh-volume

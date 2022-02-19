@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: WorkflowTemplate
 metadata:
-  name: yeti5-pipeline-template
+  name: xxx-yeti5-pipeline-template
 spec:
   arguments:
     parameters: []

@@ -1,0 +1,78 @@
+version: '1.0'
+kind: pipeline
+metadata:
+  name: xxx/CR1743-delayedVarExpansion
+  project: xxx
+  projectId: 607f2cc9728f5a5fe7304986
+  revision: 24
+  accountId: 600edc0bdffeb2bc4981d15a
+  created_at: '2022-01-13T15:17:40.228Z'
+  updated_at: '2022-02-17T20:13:39.149Z'
+  shortName: cr1743-delayedvarexpansion
+  deprecate: {}
+  labels:
+    tags: []
+  id: 61e04294c6e78d7ae52f1524
+spec:
+  triggers: []
+  stages: []
+  variables:
+    - key: PIPELINE_VAR
+      value: original value
+      encrypted: false
+    - key: REGISTRY
+      value: docker-lr
+      encrypted: false
+    - key: DISABLE_PUSH
+      value: 'true'
+      encrypted: false
+  contexts: []
+  terminationPolicy: []
+  externalResources: []
+  debug:
+    steps:
+      step_4:
+        phases:
+          before: false
+          override: false
+          after: true
+  packId: 5cd1746617313f468d669013
+  steps:
+    clone:
+      type: git-clone
+      repo: lrochette/CF-tests
+      git: github
+      revision: main
+    build:
+      type: build
+      image_name: lrochette/k2
+      working_directory: '${{clone}}/lacework/bashrc'
+      tag: latest
+      dockerfile: Dockerfile
+      registry: '${{REGISTRY}}'
+      disable_push: true
+    step_1:
+      image: alpine
+      commands:
+        - printenv | grep PIPELINE_VAR
+        - cf_export PIPELINE_VAR="new value"
+        - cf_export FOO='bar'
+    step_2:
+      image: alpine
+      commands:
+        - printenv | grep PIPELINE_VAR
+        - echo $FOO
+    simple_Step:
+      title: Simple step
+      type: laurent-cf/simple-step
+      arguments:
+        ARG_1: '${{PIPELINE_VAR}}'
+        ARG_2: '${{CF_BUILD_ID}}'
+        ARG_3: '${{FOO}}'
+    step_4:
+      image: alpine
+      commands:
+        - printenv | grep PIPELINE_VAR
+        - echo $FOO
+        - sleep 300
+

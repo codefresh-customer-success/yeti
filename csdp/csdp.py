@@ -53,8 +53,8 @@ class Csdp:
         self.volume_size = volume_size
         self.event_source = EventSource(name=v1.name, project=v1.project,
             provider="github", uuid=self.uuid)
-        self.sensor = Sensor(v1.name, "github", self.uuid, self.volume_size)
-        self.workflow_template = WorkflowTemplate(v1.name)
+        self.sensor = Sensor(v1.project, v1.name, "github", self.uuid, self.volume_size)
+        self.workflow_template = WorkflowTemplate(v1.project, v1.name)
         self.ingress = Ingress(v1.project)
 
     def save(self):

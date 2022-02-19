@@ -18,8 +18,8 @@ def str_presenter(dumper, data):
 
 ### CLASSES ###
 class WorkflowTemplate:
-    '''Implementation fo the Workflow Tewmplate'''
-    def __init__(self, name):
+    '''Implementation fo the Workflow Template'''
+    def __init__(self, project, name):
         self.logger = logging.getLogger(type(self).__name__)
         yaml_filename = "./manifests/workflowTemplate.template.yaml"
 
@@ -28,7 +28,8 @@ class WorkflowTemplate:
             template = Template(contents)
 
         values = {
-            'shortName': name
+            'short_name': name,
+            'project_name': project
         }
         workflow_template_yaml=template.substitute(values)
         yaml.add_representer(str, str_presenter)

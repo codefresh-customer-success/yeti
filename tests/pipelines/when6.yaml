@@ -1,0 +1,78 @@
+version: '1.0'
+kind: pipeline
+metadata:
+  name: xxx/when6
+  project: xxx
+  projectId: 61f2ef65d6609f72bf9bb91d
+  revision: 6
+  accountId: 600edc0bdffeb2bc4981d15a
+  created_at: '2022-02-19T05:18:56.476Z'
+  updated_at: '2022-02-19T05:39:47.998Z'
+  shortName: when6
+  deprecate: {}
+  id: 62107dc02367c44667e993d3
+spec:
+  triggers:
+    - name: lrochette/yeti-test
+      type: git
+      repo: lrochette/yeti-test
+      events:
+        - push.heads
+      pullRequestAllowForkEvents: false
+      commentRegex: /.*/gi
+      branchRegex: /.*/gi
+      branchRegexInput: regex
+      provider: github
+      disabled: false
+      options:
+        noCache: false
+        noCfCache: false
+        resetVolume: false
+      verified: true
+      context: github
+      contexts: []
+      variables: []
+      status: verified
+      id: 62100f0d1221958253067b94
+      endpoint: 'https://g.codefresh.io/api/providers/github/hook/FlcpaNIee6'
+      secret: PdN5Zw4hAnm9KPHT
+  stages: []
+  variables: []
+  contexts: []
+  steps:
+    init:
+      image: 'ubuntu:latest'
+      shell: bash
+      fail_fast: false
+      commands:
+        - 'if [ (1 + $RANDOM % 10) < 6 ] ; then exit 0; else exit 1; fi'
+    good:
+      image: 'ubuntu:latest'
+      commands:
+        - echo success
+      when:
+        steps:
+          - name: init
+            'on':
+              - success
+    bad:
+      image: 'ubuntu:latest'
+      fail_fast: false
+      commands:
+        - echo falure
+      when:
+        steps:
+          - name: init
+            'on':
+              - failure
+    always:
+      image: 'ubuntu:latest'
+      fail_fast: false
+      commands:
+        - echo falure
+      when:
+        steps:
+          - name: clone
+            'on':
+              - finished
+

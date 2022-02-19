@@ -18,10 +18,10 @@ from .step import Step
 ### CLASSES ###
 class Parameter:
     '''Parameter to a plugins'''
-    def __init__(self, plugin_name, plugin_value):
+    def __init__(self, name, value):
         self.logger = logging.getLogger(type(self).__name__)
-        self.name=plugin_name
-        self.value=plugin_value
+        self.name=name
+        self.value=value
 
     @property
     def name(self):
@@ -42,10 +42,10 @@ class Parameter:
 
 class Plugins(Step):
     'Special step to call typed-step and freestyle'
-    def __init__(self, name, fail_fast, plugin_name, version, parameters):
+    def __init__(self, name, plugin_name, version,  block, parameters):
         self.logger = logging.getLogger(type(self).__name__)
 
-        super().__init__(name, "plugins", fail_fast)
+        super().__init__(name, "plugins", block)
         self.plugin_name=plugin_name
         self.plugin_version=version
         self.parameters=parameters
