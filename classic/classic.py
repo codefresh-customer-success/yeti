@@ -4,6 +4,7 @@
 import logging
 import re
 import yaml
+from classic.condition import create_conditions_for_a_step
 import utils
 
 
@@ -93,7 +94,7 @@ class Classic:
         step_type=grab_field_value(block, "type", "freestyle")
         cwd=grab_field_value(block, "working_directory", "/codefresh/volume")
         cwd=replace_parameter_variable_by_step_output(cwd, "WORKING_DIR")
-
+ 
         if step_type == 'freestyle':
             shell=grab_field_value(block, "shell", "sh")
             commands=""
@@ -109,7 +110,7 @@ class Classic:
             #self.logger.debug("Freestyle step cwd: %s", cwd)
             #self.logger.debug("Freestyle step cwd after: %s", cwd)
 
-            return Plugins(name,  "freestyle", "0.0.1", block,
+            step_obj = Plugins(name,  "freestyle", "0.0.1", block,
                 [
                     Parameter('image',       self.replace_variable(image)),
                     Parameter("working_directory", self.replace_variable(cwd)),
@@ -118,7 +119,7 @@ class Classic:
                 ])
         elif step_type == 'git-clone':
             (repo_owner, repo_name) = parse_repo_field(block['repo'])
-            return Plugins(name, "git-clone", "0.0.1", block,
+            step_obj = Plugins(name, "git-clone", "0.0.1", block,
                 [
                     Parameter('CF_REPO_OWNER', self.replace_variable(repo_owner)),
                     Parameter("CF_REPO_NAME", self.replace_variable(repo_name)),
@@ -129,7 +130,7 @@ class Classic:
             dockerfile=grab_field_value(block, "dockerfile", "Dockerfile")
             registry=grab_field_value(block, "registry", "docker-config")
             self.add_secret_volume(registry);
-            return Plugins(name, "build", "0.0.1", block,
+            step_obj = Plugins(name, "build", "0.0.1", block,
                 [
                     Parameter('image_name', self.replace_variable(block['image_name'])),
                     Parameter("tag", self.replace_variable(tag)),
@@ -142,6 +143,14 @@ class Classic:
             raise StepTypeNotSupported("Typed step")
         else:
             raise StepTypeNotSupported(step_type)
+
+        if "when" in block:
+            conditions=create_conditions_for_a_step(block['when'])
+            self.logger.debug("Plugins %s conditions: %s",name, step_obj.conditions)
+            step_obj.conditions=conditions
+
+        self.logger.debug("Plugins %s conditions: %s",name, step_obj.conditions)
+        return step_obj
 
     def replace_variable(self, parameter):
         '''Try to replace a variable ${{}} by a matching input parameter'''

@@ -19,6 +19,7 @@ from .workflow_template import WorkflowTemplate
 
 def create_plugin_task_block(plugin, previous):
     '''Create a block of Yaml in a dag to call a plugin'''
+    logging.info("Create workflow template block for %s", plugin.name)
     block = {
         "name": plugin.name,
         "continueOn": {"failed":not bool(plugin.fail_fast)},
@@ -37,6 +38,12 @@ def create_plugin_task_block(plugin, previous):
              "value": x.value
             }
         )
+    if plugin.conditions:
+        logging.debug("Processing conditions")
+        for x in plugin.conditions:
+            block['when']= '\'{{ tasks.%s.status }} == "%s"\'' %(x.step_name, x.state)
+    else:
+            logging.debug("NO conditions")
     if previous:
         block['depends']=previous
     return block
@@ -143,6 +150,7 @@ class Csdp:
     # Add secret volumes to workflow template
     # Like in case of kaniko build for example
     def add_secret_volume(self, volume):
+        'Add mount for secret volume - aka docker secrets for kaniko'
         self.workflow_template.manifest['spec']['volumes'].append(
             {
                 "name": volume,

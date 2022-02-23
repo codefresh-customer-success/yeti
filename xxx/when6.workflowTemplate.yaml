@@ -1,0 +1,96 @@
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowTemplate
+metadata:
+  name: xxx-when6-pipeline-template
+spec:
+  arguments:
+    parameters: []
+  entrypoint: pipeline
+  templates:
+  - dag:
+      tasks:
+      - arguments:
+          parameters:
+          - name: image
+            value: ubuntu:latest
+          - name: working_directory
+            value: /codefresh/volume
+          - name: shell
+            value: bash
+          - name: commands
+            value: |+
+              if [ (1 + $RANDOM % 10) < 6 ] ; then exit 0; else exit 1; fi
+
+        continueOn:
+          failed: true
+        name: init
+        templateRef:
+          name: c2csdp.freestyle.0.0.1
+          template: freestyle
+      - arguments:
+          parameters:
+          - name: image
+            value: ubuntu:latest
+          - name: working_directory
+            value: /codefresh/volume
+          - name: shell
+            value: sh
+          - name: commands
+            value: |+
+              echo success
+
+        continueOn:
+          failed: false
+        depends: init
+        name: good
+        templateRef:
+          name: c2csdp.freestyle.0.0.1
+          template: freestyle
+        when: '''{{ tasks.init.status }} == "success"'''
+      - arguments:
+          parameters:
+          - name: image
+            value: ubuntu:latest
+          - name: working_directory
+            value: /codefresh/volume
+          - name: shell
+            value: sh
+          - name: commands
+            value: |+
+              echo falure
+
+        continueOn:
+          failed: true
+        depends: good
+        name: bad
+        templateRef:
+          name: c2csdp.freestyle.0.0.1
+          template: freestyle
+        when: '''{{ tasks.init.status }} == "failure"'''
+      - arguments:
+          parameters:
+          - name: image
+            value: ubuntu:latest
+          - name: working_directory
+            value: /codefresh/volume
+          - name: shell
+            value: sh
+          - name: commands
+            value: |+
+              echo falure
+
+        continueOn:
+          failed: true
+        depends: bad
+        name: always
+        templateRef:
+          name: c2csdp.freestyle.0.0.1
+          template: freestyle
+        when: '''{{ tasks.clone.status }} == "finished"'''
+    inputs:
+      parameters:
+      - name: CF_REPO_OWNER
+      - name: CF_REPO_NAME
+      - name: CF_BRANCH
+    name: pipeline
+  volumes: []

@@ -1,13 +1,14 @@
 #!/usr/bin/env bash
 rm -rf xxx
-export LEVEL=error
-for file in CR1743.yaml yeti5.yaml yeti4.yaml yeti3.yaml demo2.yaml 
+export LEVEL=debug
+for file in when6 CR1743 yeti5 yeti4 yeti3 demo2 
 do
   echo "Run $file:"
-  python3 c2csdp.py tests/pipelines/$file --ingress-host=https://lrcsdp.support.cf-cd.com \
+  python3 c2csdp.py tests/pipelines/${file}.yaml --ingress-host=https://lrcsdp.support.cf-cd.com \
   --log-level=$LEVEL
   echo
   echo
+  exit 0
 done
 
 # python3 c2csdp.py tests/pipelines/yeti5.yaml --ingress-host=https://lrcsdp.support.cf-cd.com \

@@ -36,3 +36,7 @@ class OnlyOneEventSupportbyTrigger(Exception):
     pass
 class ShellTypeNotSupported(Exception):
     pass
+class ConditionStateNotSupported(Exception):
+    pass
+class OnlyStepConditionsSupported(Exception):
+    pass

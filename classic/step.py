@@ -5,12 +5,15 @@
 import logging
 import re
 
+from .condition import create_conditions_for_a_step
+
+
 ### GLOBALS ###
 
 ### FUNCTIONS ###
 def grab_field_value(block, field, default_value):
-    '''Return the field value from the yaml block if it exists 
-       or return the default valye'''
+    '''Return the field value from the yaml block if it exists
+       or return the default value'''
     value=default_value
     if field in block:
         value=block[field]
@@ -37,18 +40,24 @@ def replace_parameter_variable_by_step_output(value, output):
 class Step:
     '''Super class for step'''
     def __init__(self, name, stype, block):
+        self.logger = logging.getLogger(type(self).__name__)
+        self.logger.debug("Creating New Step: %s", name)
 
         cwd=grab_field_value(block, "working_directory", "/codefresh/volume")
         cwd=replace_parameter_variable_by_step_output(cwd, "WORKING_DIR")
         fail_fast=grab_field_value(block, "fail_fast", "false")
 
-        self.logger = logging.getLogger(type(self).__name__)
-        self.logger.debug("Creating New Step: %s", name)
-
         self.name = name
         self.type = stype
         self.fail_fast = fail_fast
+        self._conditions=[]
 
+        if "when" in block:
+            conditions=create_conditions_for_a_step(block['when'])
+            self.logger.debug("Plugins %s conditions: %s",name, conditions)
+            self.conditions=conditions
+        else:
+            self._conditions=[]
     #
     # Setters and getters
     #
@@ -79,3 +88,11 @@ class Step:
     @fail_fast.setter
     def fail_fast(self, value):
         self._fail_fast = value
+
+    @property
+    def conditions(self):
+        'Return the array of conditions'
+        return self._conditions
+    @conditions.setter
+    def conditions(self, value):
+        self._conditions=value

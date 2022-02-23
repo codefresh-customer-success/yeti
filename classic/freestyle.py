@@ -16,6 +16,8 @@ from .exceptions import VariableNotSupportedInField
 
 ### CLASSES ###
 class Freestyle(Step):
+    '''Freestyle step: not use as it is implemented as plugin for now'''
+    
     def __init__(self, name, shell, image, cwd, commands):
         self.logger = logging.getLogger(type(self).__name__)
 
@@ -27,6 +29,7 @@ class Freestyle(Step):
 
     @property
     def image(self):
+        'Return image'
         return self._image
     @image.setter
     def image(self, value = None):
@@ -36,6 +39,7 @@ class Freestyle(Step):
 
     @property
     def commands(self):
+        'return list of comamnds'
         return self._commands
     @commands.setter
     def commands(self, value = None):
@@ -46,6 +50,7 @@ class Freestyle(Step):
 
     @property
     def cwd(self):
+        'Return working_directory info'
         return self._cwd
     @cwd.setter
     def cwd(self, value):
