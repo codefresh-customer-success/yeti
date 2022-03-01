@@ -67,7 +67,7 @@ spec:
           - name: commands
             value: |+
               echo failure
-        depends: "bad && (init.Succeeded || init.Failed || init. Daemoned)"
+        depends: "bad && (init.Succeeded || init.Failed || init.Daemoned)"
         name: always
         templateRef:
           name: c2csdp.freestyle.0.0.1
