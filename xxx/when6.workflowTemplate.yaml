@@ -20,9 +20,6 @@ spec:
           - name: commands
             value: |+
               if [ (1 + $RANDOM % 10) < 6 ] ; then exit 0; else exit 1; fi
-
-        continueOn:
-          failed: true
         name: init
         templateRef:
           name: c2csdp.freestyle.0.0.1
@@ -38,10 +35,7 @@ spec:
           - name: commands
             value: |+
               echo success
-
-        continueOn:
-          failed: false
-        depends: init
+        depends: init.Successful
         name: good
         templateRef:
           name: c2csdp.freestyle.0.0.1
@@ -57,11 +51,8 @@ spec:
             value: sh
           - name: commands
             value: |+
-              echo falure
-
-        continueOn:
-          failed: true
-        depends: good
+              echo failure
+        depends: "good && init.Errored"
         name: bad
         templateRef:
           name: c2csdp.freestyle.0.0.1
@@ -77,16 +68,12 @@ spec:
             value: sh
           - name: commands
             value: |+
-              echo falure
-
-        continueOn:
-          failed: true
-        depends: bad
+              echo failure
+        depends: "bad && clone.Completed"
         name: always
         templateRef:
           name: c2csdp.freestyle.0.0.1
           template: freestyle
-        when: '''{{ tasks.clone.status }} == "finished"'''
     inputs:
       parameters:
       - name: CF_REPO_OWNER
