@@ -35,12 +35,11 @@ spec:
           - name: commands
             value: |+
               echo success
-        depends: init.Successded
+        depends: init.Succeeded
         name: good
         templateRef:
           name: c2csdp.freestyle.0.0.1
           template: freestyle
-        when: '''{{ tasks.init.status }} == "success"'''
       - arguments:
           parameters:
           - name: image
@@ -52,12 +51,11 @@ spec:
           - name: commands
             value: |+
               echo failure
-        depends: "good && init.Errored"
+        depends: "good && init.Failed"
         name: bad
         templateRef:
           name: c2csdp.freestyle.0.0.1
           template: freestyle
-        when: '''{{ tasks.init.status }} == "failure"'''
       - arguments:
           parameters:
           - name: image
@@ -69,7 +67,7 @@ spec:
           - name: commands
             value: |+
               echo failure
-        depends: "bad && init.Completed"
+        depends: "bad && (init.Succeeded || init.Failed || init. Daemoned"
         name: always
         templateRef:
           name: c2csdp.freestyle.0.0.1
