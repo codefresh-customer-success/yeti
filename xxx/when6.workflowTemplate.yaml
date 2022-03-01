@@ -35,7 +35,7 @@ spec:
           - name: commands
             value: |+
               echo success
-        depends: init.Successful
+        depends: init.Successded
         name: good
         templateRef:
           name: c2csdp.freestyle.0.0.1
