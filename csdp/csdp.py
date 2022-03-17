@@ -15,8 +15,26 @@ from .workflow_template import WorkflowTemplate
 
 ### GLOBALS ###
 
-### FUNCTIONS ###
 
+### FUNCTIONS ###
+def convert_condition_into_depends_string(cond):
+    '''Transform the string for the when V1 clause into a V2  depends step.state'''
+    condition_conversion = {
+        "success": ["Succeeded"],
+        "failure": ["Errored"],
+        "finished": ["Succeeded", "Errored"],
+        "skipped": ["Skipped"]
+    }
+    str = " && ("
+    counter= 0
+    for c in condition_conversion[cond.state]:
+        if counter != 0:
+            str += "|| "
+        str += '%s.%s' % (cond.step_name, c)
+        counter += 1
+    str += ")"
+    return str
+  
 def create_plugin_task_block(plugin, previous):
     '''Create a block of Yaml in a dag to call a plugin'''
     logging.info("Create workflow template block for %s", plugin.name)
@@ -38,14 +56,15 @@ def create_plugin_task_block(plugin, previous):
              "value": x.value
             }
         )
+    if previous:
+        block['depends']=previous
     if plugin.conditions:
         logging.debug("Processing conditions")
         for x in plugin.conditions:
-            block['when']= '\'{{ tasks.%s.status }} == "%s"\'' %(x.step_name, x.state)
+            block['depends'] += convert_condition_into_depends_string(x)
     else:
             logging.debug("NO conditions")
-    if previous:
-        block['depends']=previous
+
     return block
 
 ### CLASSES ###

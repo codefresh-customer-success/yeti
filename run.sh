@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 rm -rf xxx
 export LEVEL=debug
-for file in when6 CR1743 yeti5 yeti4 yeti3 demo2 
+for file in when6  # CR1743 yeti5 yeti4 yeti3 demo2 
 do
   echo "Run $file:"
   python3 c2csdp.py tests/pipelines/${file}.yaml --ingress-host=https://lrcsdp.support.cf-cd.com \

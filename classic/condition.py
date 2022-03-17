@@ -8,6 +8,7 @@ from .exceptions import OnlyStepConditionsSupported
 
 ### GLOBALS ###
 
+
 ### FUNCTIONS ###
 
 def create_conditions_for_a_step(block):

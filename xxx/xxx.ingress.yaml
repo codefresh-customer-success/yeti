@@ -12,5 +12,5 @@ spec:
             name: when6-eventsource-svc
             port:
               number: 80
-        path: /webhooks/xxx/when6/github-de8c2a4a-98f3-11ec-a53e-acde48001122
+        path: /webhooks/xxx/when6/github-52e4c1fe-a64b-11ec-8c8d-acde48001122
         pathType: ImplementationSpecific
