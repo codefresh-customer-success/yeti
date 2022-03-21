@@ -72,7 +72,7 @@ spec:
         - echo falure
       when:
         steps:
-          - name: clone
+          - name: init
             'on':
               - finished
 

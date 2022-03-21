@@ -79,7 +79,7 @@ spec:
 
         continueOn:
           failed: true
-        depends: bad && (clone.Succeeded|| clone.Errored)
+        depends: bad && (init.Succeeded|| init.Errored)
         name: always
         templateRef:
           name: c2csdp.freestyle.0.0.1
