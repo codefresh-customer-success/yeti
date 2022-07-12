@@ -21,8 +21,6 @@ spec:
             value: |+
               if [ (1 + $RANDOM % 10) < 6 ] ; then exit 0; else exit 1; fi
 
-        # continueOn:
-        #   failed: true
         name: init
         templateRef:
           name: c2csdp.freestyle.0.0.1
@@ -39,8 +37,6 @@ spec:
             value: |+
               echo success
 
-        # continueOn:
-        #   failed: false
         depends: init && (init.Succeeded)
         name: good
         templateRef:
@@ -58,8 +54,6 @@ spec:
             value: |+
               echo falure
 
-        # continueOn:
-        #   failed: true
         depends: good && (init.Errored)
         name: bad
         templateRef:
@@ -77,8 +71,6 @@ spec:
             value: |+
               echo falure
 
-        # continueOn:
-        #   failed: true
         depends: bad && (init.Succeeded|| init.Errored)
         name: always
         templateRef:
