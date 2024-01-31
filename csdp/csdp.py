@@ -2,6 +2,7 @@
 
 ### IMPORTS ###
 import logging
+from multiprocessing import Condition
 import uuid
 import os
 import sys
@@ -40,7 +41,7 @@ def create_plugin_task_block(plugin, previous):
     logging.info("Create workflow template block for %s", plugin.name)
     block = {
         "name": plugin.name,
-        "continueOn": {"failed":not bool(plugin.fail_fast)},
+        #"continueOn": {"failed":not bool(plugin.fail_fast)},
         "templateRef": {
             "name": f"c2csdp.{plugin.plugin_name}.{plugin.plugin_version}",
             "template": plugin.plugin_name
@@ -57,8 +58,9 @@ def create_plugin_task_block(plugin, previous):
             }
         )
     if previous:
-        block['depends']=previous
-    if plugin.conditions:
+        block['depends']=previous.name
+        if previous.fail_fast == "true":
+            plugin.conditions.append(Condition(previous.name, "failure"))
         logging.debug("Processing conditions")
         for x in plugin.conditions:
             block['depends'] += convert_condition_into_depends_string(x)

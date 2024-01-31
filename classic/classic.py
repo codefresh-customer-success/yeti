@@ -4,7 +4,6 @@
 import logging
 import re
 import yaml
-from classic.condition import create_conditions_for_a_step
 import utils
 
 
@@ -143,11 +142,6 @@ class Classic:
             raise StepTypeNotSupported("Typed step")
         else:
             raise StepTypeNotSupported(step_type)
-
-        if "when" in block:
-            conditions=create_conditions_for_a_step(block['when'])
-            self.logger.debug("Plugins %s conditions: %s",name, step_obj.conditions)
-            step_obj.conditions=conditions
 
         self.logger.debug("Plugins %s conditions: %s",name, step_obj.conditions)
         return step_obj

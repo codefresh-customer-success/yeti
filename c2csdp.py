@@ -44,7 +44,7 @@ def main():
     previous = None
     for step in v1_pipeline.steps:
         v2_object.convert_step(step, previous)
-        previous = step.name
+        previous = step
 
     logging.info("Processing variables")
     for var in v1_pipeline.variables:
